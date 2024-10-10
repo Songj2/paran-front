@@ -41,7 +41,7 @@ const RoomRow = ({ active, onSelect }: RoomRowProps) => {
 
 
   const loadRoomFiles = (rooms: any[]) => {
-    const roomIds = rooms.map(book => book.id);
+    const roomIds = rooms.map(room => room.id);
     fileService.selectFileList(roomIds, FileType.ROOM, dispatch)
     dispatch(upLoading(false))
   };
