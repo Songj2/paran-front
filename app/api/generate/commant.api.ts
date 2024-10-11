@@ -1,4 +1,4 @@
-import {api} from '../axios';
+import api from '../axios';
 import requests from "@/app/api/requests";
 import {ExceptionResponseModel} from "@/app/model/error.model";
 import {CommentRequestModel, CommentResponseModel} from "@/app/model/comment/comment.model";

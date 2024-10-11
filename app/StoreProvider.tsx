@@ -10,7 +10,6 @@ export  default  function  StoreProvider ( {
 } ) { 
   const storeRef = useRef< AppStore >() 
   if (!storeRef. current ) { 
-    // 처음 렌더링할 때 스토어 인스턴스를 생성합니다.
      storeRef. current = makeStore () 
   } 
 

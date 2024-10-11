@@ -12,7 +12,7 @@ export interface ExceptionResponseModel {
 
 // 상태 인터페이스 정의
 export interface ErrorState {
-    currentError: ExceptionResponseModel | null;
+    currentError?: ExceptionResponseModel;
     errorHistory: ExceptionResponseModel[];
     isError: boolean;
     isGlobalLoading: boolean,
@@ -21,7 +21,7 @@ export interface ErrorState {
 
 // 초기 상태
 export const initialErrorState: ErrorState = {
-    currentError: null,
+    currentError: {} as ExceptionResponseModel,
     errorHistory: [],
     isError: false,
     isGlobalLoading: false,

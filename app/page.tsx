@@ -5,7 +5,6 @@ import Carousel from "./components/common/Carousel";
 import TabButton from "./components/common/Row/TabButton";
 
 export default function Home() {
-
   return (
     <div id="home">
       <section className="artWrap">

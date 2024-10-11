@@ -4,9 +4,9 @@ import qs from "qs";
 import requests from "../requests";
 
 export const fileAPI = {
-    findAll(refIdList: number[], type: string) {
+    findAll(refIds: number[], type: string) {
         return api.get<FileModel[]>(`${requests.fetchFiles}/list`, {
-            params: { type: type, refIdList: refIdList },
+            params: { type: type, refIds: refIds },
             paramsSerializer: (params: any) => qs.stringify(params, { arrayFormat: 'repeat' })
         });
     },

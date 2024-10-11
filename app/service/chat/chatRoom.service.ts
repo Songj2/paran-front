@@ -26,7 +26,7 @@ const insert = async ({ roomName, nickname, dispatch }: {
     roomName: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<string | boolean> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatRoomAPI.insert(roomName, nickname);
@@ -41,7 +41,7 @@ const insert = async ({ roomName, nickname, dispatch }: {
 const findList = async ({ nickname, dispatch }: {
     nickname: string,
     dispatch: AppDispatch
-}): Promise<ChatRoomModel[]> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatRoomAPI.findList(nickname);
@@ -59,7 +59,7 @@ const modifyName = async ({ roomName, roomId, nickname, dispatch }: {
     roomId: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<boolean | string> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatRoomAPI.modifyName(roomName, roomId, nickname);
@@ -76,7 +76,7 @@ const modifyPassword = async ({ roomId, password, nickname, dispatch }: {
     password: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<boolean | string> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatRoomAPI.modifyPassword(roomId, password, nickname);
@@ -105,7 +105,7 @@ const insertLastReadMessageTime = async ({ roomId, nickname, dispatch }: {
     roomId: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<boolean> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatRoomAPI.insertLastReadMessageTime(roomId, nickname);

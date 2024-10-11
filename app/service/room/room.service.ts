@@ -29,7 +29,8 @@ const modify = async (roomModel: RoomUpdateModel, dispatch: AppDispatch): Promis
     try {
         dispatch(saveLoading(true))
         const response = await roomAPI.modify(roomModel)
-        dispatch(updateRoom(response.data));
+        console.log(response)
+        dispatch(updateRoom(response.status.data));
     } catch (error: any) {
         if (error.response) {
             console.error('Server Error:', error.response.data);

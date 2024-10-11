@@ -19,7 +19,8 @@ const NaverMap = () => {
         const initMap = () => {
             if (typeof window !== 'undefined' && window.naver) {
                 const mapOptions = {
-                    center: new window.naver.maps.LatLng(addresses[0].latitude, addresses[0].longitude),
+                    //center: new window.naver.maps.LatLng(addresses[0].latitude, addresses[0].longitude),
+                    center: new window.naver.maps.LatLng('38.00', '37.99'),
                     zoom: 16,
                 };
 

@@ -1,25 +1,28 @@
 import { useRouter } from "next/navigation";
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Alert from "./Alert";
+import { useAppDispatch } from "@/lib/store";
+import { saveBookings } from "@/lib/features/room/bookings.slice";
+import { BookingModel } from "@/app/model/room/bookings.model";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  id: number;
 }
 
-interface FormData {
-  date: string;
-  time: string[];
-}
-
-export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
-  const router = useRouter();
+export default function BookingModal({ id, isOpen, onClose }: BookingModalProps) {
+  const router = useRouter()
+  const dispatch = useAppDispatch()
   const [alertMessage, setAlertMessage] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<BookingModel>({
+    enabled: false,
     date: '',
-    time: []
+    usingTime: [],
+    roomId: id,
+    groupId: 0
   });
   const [isDateSelected, setIsDateSelected] = useState(false);
   const [minDate, setMinDate] = useState("");
@@ -46,15 +49,16 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     const { value, checked } = e.target;
     setFormData(prevState => ({
       ...prevState,
-      time: checked
-        ? [...prevState.time, value]
-        : prevState.time.filter(item => item !== value)
+      usingTime: checked
+        ? [...prevState.usingTime, value]
+        : prevState.usingTime.filter(item => item !== value)
     }));
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log(formData);
+    dispatch(saveBookings([formData]));
     setAlertMessage("예약 되었습니다.");
     setIsAlertOpen(true);
   };
@@ -108,6 +112,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     </>
   );
 }
+
 const ModalHeader = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
@@ -137,7 +142,7 @@ function ModalBody({
   isDateSelected,
   minDate
 }: {
-  formData: FormData;
+  formData: BookingModel;
   handleDateChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: FormEvent) => void;
@@ -160,13 +165,13 @@ function ModalBody({
           <TimeSlots 
             timeSlots={timeSlots} 
             handleChange={handleTimeChange}
-            selectedTimes={formData.time}
+            selectedTimes={formData.usingTime}
           />
         )}
         <button 
           type="submit" 
           className="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-          disabled={!isDateSelected || formData.time.length === 0}
+          disabled={!isDateSelected || formData.usingTime.length === 0}
         >
           예약 신청하기
         </button>

@@ -1,6 +1,6 @@
 import { UserModel } from "@/app/model/user/user.model";
 import { AppDispatch } from "@/lib/store";
-import { logoutUser, saveError, saveLoading, saveSuccess, saveUserDetail, saveUserList } from "@/lib/features/users/user.slice";
+import { logoutUser, saveError, saveLoading, saveSuccess, saveUserList } from "@/lib/features/users/user.slice";
 import userAPI from "@/app/api/generate/user.api";
 import axios from "axios";
 

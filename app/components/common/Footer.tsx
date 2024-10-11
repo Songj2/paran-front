@@ -16,7 +16,7 @@ export default function Footer() {
               </li>
               <li className="mb-4">
                 <Link href="/" className="hover:underline">
-                  USER : 강은석
+                  USER, SECURITY : 강은석
                 </Link>
               </li>
               <li className="mb-4">

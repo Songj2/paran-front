@@ -23,11 +23,6 @@ export default function ChatRoomList({ chatRooms, currentChatRoomId }: ChatRoomL
     const dispatch = useAppDispatch()
     const nickname = useSelector(getCurrentUser)?.nickname ?? "";
 
-    // Popover를 토글하는 함수
-    const togglePopover = () => {
-        setIsPopoverVisible((prev) => !prev);
-    };
-
     // 현재 활성화된 채팅방을 제외한 채팅방 필터링
     const filteredChatRooms = chatRooms?.filter((room) => room.roomId !== currentChatRoomId);
 
@@ -53,7 +48,7 @@ export default function ChatRoomList({ chatRooms, currentChatRoomId }: ChatRoomL
                 id="popup-button"
                 type="button"
                 className="relative mb-3 me-4 w-full rounded-lg bg-green-700 px-5 py-2.5 text-center text-lg font-bold text-gray-100 hover:bg-green-600"
-                onClick={togglePopover}
+                onClick={()=> setIsPopoverVisible((prev) => !prev)}
             >
                 참여중인 대화방 이름 {"^"}
             </button>

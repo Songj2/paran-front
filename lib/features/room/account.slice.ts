@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialAccountState, AccountResultModel, AccountCancelModel } from '../../../app/model/room/account.model'
+import { RootState } from '@/lib/store';
 
 const accountSlice = createSlice({
   name: 'account',
@@ -33,12 +34,12 @@ const accountSlice = createSlice({
 });
 
 // Selector 함수들
-export const getAccountResults = (state: any) => state.accountResults;
-export const getCurrentAccountResult = (state: any) => state.currentAccountResult;
-export const getAccountCancels = (state: any) => state.accountCancels;
-export const getCurrentAccountCancel = (state: any) => state.currentAccountCancel;
-export const getIsLoading = (state: any) => state.isLoading;
-export const getError = (state: any) => state.error;
+export const getAccountResults = (state: RootState) => state.account.accountResults;
+export const getCurrentAccountResult = (state: RootState) => state.account.currentAccountResult;
+export const getAccountCancels = (state: RootState) => state.account.accountCancels;
+export const getCurrentAccountCancel = (state: RootState) => state.account.currentAccountCancel;
+export const getIsLoading = (state: RootState) => state.account.isLoading;
+export const getError = (state: RootState) => state.account.error;
 
 // 액션 생성자들을 export
 export const {

@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
-import HeartCheckbox from "./HeartCheckBox";
 import { saveCurrentBook } from "@/lib/features/group/book.slice";
 import { BookResponseModel } from "@/app/model/group/book.model";
 import { FileModel } from "@/app/model/file/file.model";
@@ -43,16 +42,17 @@ const BookCard = ({ book, active, file }: BookCardProps) => {
     };
 
     return (
-        <div className="relative max-w-sm">
+        <li className="list-none">
             <div
                 className={`max-w-sm rounded-lg border border-gray-200 bg-white shadow ${active ? "ring-2 ring-green-500" : ""}`}>
                 <Image
-                    width={400}
-                    height={380}
-                    className="cursor-pointer rounded-t-lg"
-                    src={file.path === process.env.NEXT_PUBLIC_IMAGE_DEFAULT ? process.env.NEXT_PUBLIC_IMAGE_DEFAULT : `http://localhost:8000/api/files/one?path=${file.path}`}
+                    width={260}
+                    height={210}
+                    className="size-80 cursor-pointer rounded-t-lg object-cover"
+                    src={file.path === process.env.NEXT_PUBLIC_IMAGE_DEFAULT ? process.env.NEXT_PUBLIC_IMAGE_DEFAULT : `http://localhost:8000/api/files?path=${file.path}`}
                     alt={`cover of ${book.title}`}
                     priority
+               
                 />
                 <div className="p-5">
                     <h5 className={`mb-2 text-lg font-medium tracking-tight ${active ? "text-green-600" : "text-gray-900"} cursor-pointer dark:text-white`}>
@@ -90,7 +90,7 @@ const BookCard = ({ book, active, file }: BookCardProps) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </li>
     );
 };
 

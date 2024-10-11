@@ -1,6 +1,7 @@
 // reviewSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ReviewModel, ReviewUpdateModel, initialReviewState } from '../../../app/model/room/review.model';
+import { RootState } from '../../store';
 
 // createSlice를 사용하여 slice 생성
 const reviewSlice = createSlice({
@@ -35,10 +36,10 @@ const reviewSlice = createSlice({
 });
 
 // Selector 함수들
-export const getReviews = (state: any) => state.reviews;
-export const getCurrentReview = (state: any) => state.currentReview;
-export const getIsLoading = (state: any) => state.isLoading;
-export const getError = (state: any) => state.error;
+export const getReviews = (state: RootState) => state.review.reviews;
+export const getCurrentReview = (state: RootState) => state.review.currentReview;
+export const getIsLoading = (state: RootState) => state.review.isLoading;
+export const getError = (state: RootState) => state.review.error;
 
 
 // 액션 생성자들을 export

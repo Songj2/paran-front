@@ -8,14 +8,13 @@ interface MessageContainerProps {
 }
 
 const MessageContainer = ({ messages, currentUserNickname }: MessageContainerProps) => {
-  const messageEndRef = useRef<HTMLDivElement | null>(null); // 마지막 메시지를 참조하는 ref
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-  // 새로운 메시지가 올 때마다 자동 스크롤
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" }); // 부드럽게 스크롤
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" }); 
     }
-  }, [messages]); // 메시지가 업데이트될 때마다 실행
+  }, [messages]);
 
   return (
   <div className={styles.messageContainer}>
@@ -56,7 +55,8 @@ const MessageContainer = ({ messages, currentUserNickname }: MessageContainerPro
           </>
         );
       })}
-      <div ref={messageEndRef} /> {/* 스크롤을 마지막으로 이동 */}
+      
+      <div ref={messageEndRef} />
     </div>
   );
 };

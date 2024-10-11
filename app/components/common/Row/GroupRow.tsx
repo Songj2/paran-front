@@ -1,12 +1,12 @@
-"use client";
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { getError, getGroups, getIsLoading } from "@/lib/features/group/group.slice";
-import GroupCard from "./GroupCard";
-import LoadingSpinner from "../status/LoadingSpinner";
-import ErrorMessage from "../status/ErrorMessage";
-import { groupService } from "@/app/service/group/group.service";
-import { useAppDispatch } from "@/lib/store";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getGroups, getIsLoading, getError } from '@/lib/features/group/group.slice';
+import GroupCard from './GroupCard';
+import LoadingSpinner from '../status/LoadingSpinner';
+import ErrorMessage from '../status/ErrorMessage';
+import { groupService } from '@/app/service/group/group.service';
+import { useAppDispatch } from '@/lib/store';
+import Pagination from './pagination/Pagination';
 
 interface GroupRowProps {
   active: boolean;
@@ -14,33 +14,37 @@ interface GroupRowProps {
 }
 
 const GroupRow = ({ active, onSelect }: GroupRowProps) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const groups = useSelector(getGroups);
-  // error 나 loading  부분은 isFetching 작업을 통해서 최적화 && react query 에서 미리 불러와서 사용할 수 있도록 하자.
   const loading = useSelector(getIsLoading);
   const error = useSelector(getError);
-  const page = 5; //임의로 넣어둠
-  const size = 5; //임의로 넣어둠
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
+  const [currentPage, setCurrentPage] = useState();
+  const totalItems = 10; 
 
   useEffect(() => {
-    groupService.findList(page, size, dispatch)
-  }, []);
+    groupService.findList(page, pageSize, dispatch);
+    
+  }, [page, pageSize]);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div>
+    <>
       {groups.map((group) => (
-        <GroupCard
-          key={group.id}
-          group={group}
-          active={active}
-          onSelect={onSelect}
-        />
+        <GroupCard key={group.id} group={group} active={active} onSelect={onSelect} />
       ))}
-    </div>
+      <Pagination 
+        currentPage={page} 
+        pageSize={pageSize} 
+        totalItems={totalItems} 
+        onPageChange={setPage} 
+        onPageSizeChange={setPageSize} 
+      />
+    </>
   );
 };
 

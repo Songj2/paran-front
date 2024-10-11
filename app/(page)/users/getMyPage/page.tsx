@@ -1,20 +1,19 @@
-"use client";  // 클라이언트 컴포넌트로 선언
+"use client"; 
 
 import UserProfile from "@/app/components/user/UserProfile";
 import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
+import ErrorMessage from "@/app/components/common/status/ErrorMessage";
+import { getCurrentUser } from "@/lib/features/users/user.slice";
 
-export default function GetMyPage() {  // 컴포넌트 이름은 대문자로 시작해야 합니다.
-    const currentUser = useSelector((state: RootState) => state.user.currentUser);
-
-    if (!currentUser?.nickname) {
-        console.error("닉네임이 없습니다.");
-        return <p>사용자 정보를 불러올 수 없습니다.</p>;
+export default function GetMyPage() {
+    const currentUser = useSelector(getCurrentUser);
+    if (!currentUser || !currentUser.nickname) {
+        return <ErrorMessage message={'사용자 정보가 없습니다.'} />;
     }
 
     return (
         <div>
-            <UserProfile nickname={currentUser.nickname} />
+            <UserProfile getUser={currentUser.nickname} />
         </div>
     );
 }

@@ -1,10 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import HeartCheckbox from "./HeartCheckBox";
 
 interface ChatCardProps {
-  chat: any; // 타입을 더 구체적으로 정의할 수 있습니다.
+  chat: any; 
   active: boolean;
   onSelect: () => void;
 }
@@ -18,16 +16,6 @@ const ChatCard = ({ chat, active, onSelect }: ChatCardProps) => {
         }`}
         onClick={onSelect}
       >
-        <Link href={`/chats/${chat.id}`}>
-          <Image
-            width={400}
-            height={330}
-            className="rounded-t-lg"
-            src={chat.imageUrl || process.env.NEXT_PUBLIC_IMAGE_DEFAULT}
-            alt={`chat cover`}
-            priority
-          />
-        </Link>
         <div className="p-5">
           <Link href={`/chats/${chat.id}`}>
             <h5 className={`mb-2 text-lg font-medium tracking-tight ${

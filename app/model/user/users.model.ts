@@ -80,6 +80,3 @@ export interface LikeRoomModel {
   roomId: number; // 공간 ID(필수)
   nickname: string; //닉네임 (필수)
 }
-
-
-

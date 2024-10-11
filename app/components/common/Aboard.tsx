@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Alert from "./Alert";
 import { useAppDispatch } from "@/lib/store";
 import { useSelector } from "react-redux";
-import { getCurrentUser } from "@/lib/features/user.Slice";
+import { getCurrentUser } from "@/lib/features/users/user.slice";
 
 interface AccordionItem {
   id: string;
@@ -61,7 +61,7 @@ const accordionItems: AccordionItem[] = [
     category: "",
     content: (
       <>
-        <p className="mb-2 text-gray-500">
+        <p className="mb-2 text-gray-500 border-b-1">
           공간 예약은 웹사이트나 모바일 앱을 통해 간단히 할 수 있습니다. 원하는
           날짜와 시간을 선택하고, 필요한 인원수를 입력한 후 예약 버튼을 클릭하면
           됩니다.
@@ -106,7 +106,7 @@ export default function About() {
     setAlertMessage("선택한 항목이 삭제되었습니다.");
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = ({item}: any) => {
     if (checkedItems.length === 0) {
       setIsAlertOpen(true);
       setAlertMessage("수정할 항목을 선택해주세요.");
@@ -120,8 +120,8 @@ export default function About() {
     }
 
     // 선택된 항목의 ID를 쿼리 파라미터로 전달
-    //router.push(`/aboard/update?id=${checkedItems[0]}`);
-    router.push(`/aboard/update/${id}`);
+    //router.push(`/aboard/update?id=${check edItems[0]}`);
+    router.push(`/aboard/update/${item.id}}`);
   };
 
   const toggleItem = (id: string) => {

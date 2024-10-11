@@ -3,53 +3,68 @@ import { ChatMessageModel } from "@/app/model/chat/chat.model";
 import { AppDispatch } from "@/lib/store";
 import { saveError, saveLoading } from "@/lib/features/chat/chat.slice";
 import chatMessageAPI from "@/app/api/generate/chatMessage.api";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import { getAccessToken } from "@/app/api/authUtils";
 
 const findList = async ({ roomId, nickname, onMessage }: {
     roomId: string,
     nickname: string,
     onMessage: (message: ChatMessageModel) => void
 }): Promise<() => void> => {
+    let eventSource: EventSourcePolyfill | null = null;
     try {
-        const eventSource = new EventSource(
-            `http://localhost:8000${requests.fetchChats}/message/${roomId}?nickname=${nickname}`
+
+        const token = getAccessToken();
+        if (!token) {
+            throw new Error('No access token available');
+        }
+        eventSource = new EventSourcePolyfill(
+            `http://localhost:8000/message/${roomId}?nickname=${nickname}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
         );
 
         eventSource.onopen = () => {
             console.log('SSE 연결 성공:', eventSource);
         };
 
-        // 과거 메시지를 수신 (past-message 이벤트)
-        eventSource.addEventListener('past-message', (event: MessageEvent) => {
-            try {
-                const parsedData: ChatMessageModel = JSON.parse(event.data);
-                console.log('과거 메시지:', parsedData);
-                onMessage(parsedData);  // 상태 업데이트 콜백 호출
-            } catch (error) {
-                console.error('과거 메시지 파싱 오류:', error);
+        eventSource.addEventListener('past-message', {
+            handleEvent(event: MessageEvent) {
+                try {
+                    const parsedData: ChatMessageModel = JSON.parse(event.data);
+                    console.log('과거 메시지:', parsedData);
+                    onMessage(parsedData); // 상태 업데이트 콜백 호출
+                } catch (error) {
+                    console.error('과거 메시지 파싱 오류:', error);
+                }
             }
         });
 
-        // 실시간 메시지를 수신 (chat-message 이벤트)
-        eventSource.addEventListener('chat-message', (event: MessageEvent) => {
-            try {
-                const parsedData: ChatMessageModel = JSON.parse(event.data);
-                console.log('실시간 메시지:', parsedData);
-                onMessage(parsedData);  // 상태 업데이트 콜백 호출
-            } catch (error) {
-                console.error('실시간 메시지 파싱 오류:', error);
+        eventSource.addEventListener('chat-message', {
+            handleEvent(event: MessageEvent) {
+                try {
+                    const parsedData: ChatMessageModel = JSON.parse(event.data);
+                    console.log('실시간 메시지:', parsedData);
+                    onMessage(parsedData); // 상태 업데이트 콜백 호출
+                } catch (error) {
+                    console.error('실시간 메시지 파싱 오류:', error);
+                }
             }
         });
 
         // 오류가 발생했을 때 처리
         eventSource.onerror = (error) => {
             console.error("SSE 연결 오류 발생:", error);
-            eventSource.close();
+            eventSource?.close();
         };
 
         // 함수가 호출되면 EventSource 연결을 닫아 구독을 취소하는 unsubscribe 함수 반환
         return () => {
             console.log("SSE 연결 해제");
-            eventSource.close();
+            eventSource?.close();
         };
 
     } catch (error) {
@@ -68,7 +83,7 @@ const insert = async ({ nickname, roomId, message, dispatch }: {
     roomId: string,
     message: string,
     dispatch: AppDispatch
-}): Promise<boolean> => {
+}): Promise<any> => {
     try {
         dispatch(saveLoading(true));
         const response = await chatMessageAPI.insert(nickname, roomId, message)
@@ -85,7 +100,7 @@ const insert = async ({ nickname, roomId, message, dispatch }: {
 const findUnReadTotalCount = async ({ nickname, dispatch }: {
     nickname: string,
     dispatch: AppDispatch
-}): Promise<number> => {
+}): Promise<any> => {
     try {
         dispatch(saveLoading(true));
         const response = await chatMessageAPI.findUnReadTotalCount(nickname)

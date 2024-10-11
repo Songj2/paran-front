@@ -1,6 +1,4 @@
 import React from "react";
-import HeartCheckbox from "./HeartCheckBox";
-import SelectCheckBox from "./SelectCheckBox";
 import { useAppDispatch } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { saveCurrentGroup } from "@/lib/features/group/group.slice";
@@ -21,13 +19,9 @@ const GroupCard = ({ group, active, onSelect }: GroupCardProps) => {
   };
 
   return (
-    <div className="max-w-sm">
-      <form className="relative top-2">
-        <div className="absolute flex w-full px-4 justify-end">
-        </div>
-      </form>
-      <div
-        className={`max-w-sm rounded-lg border border-gray-200 bg-white shadow ${active ? 'ring-2 ring-green-500' : ''
+    <>
+      <li
+        className={`max-w-sm my-6 list-none rounded-lg border border-gray-200 bg-white shadow ${active ? 'ring-2 ring-green-500' : ''
           }`}
         onClick={onSelect}
       >
@@ -67,8 +61,8 @@ const GroupCard = ({ group, active, onSelect }: GroupCardProps) => {
             </svg>
           </button>
         </div>
-      </div>
-    </div>
+      </li>
+    </>
   );
 };
 

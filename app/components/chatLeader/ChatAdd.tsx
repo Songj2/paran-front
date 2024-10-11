@@ -3,40 +3,36 @@ import { chatRoomService } from "@/app/service/chat/chatRoom.service";
 import { useAppDispatch } from "@/lib/store";
 import { useRouter } from "next/navigation"
 import { useState } from "react";
-import { getUsers } from "@/lib/features/users/user.slice"
+import { getCurrentUser } from "@/lib/features/users/user.slice"
 import { useSelector } from "react-redux";
 
 
 export default function ChatAdd() {
   const dispatch = useAppDispatch()
-  const user = useSelector(getUsers);
-  const nickname = 
+  const user = useSelector(getCurrentUser)
+  const nickname = user?.nickname ?? ''
+  const route = useRouter()
 
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     title: '',
     password: '',
     public: false,
-  });
+  })
 
-  const route = useRouter();
 
   const handleChange = (event: any) => {
-    const { name, value, type } = event.target;
+    const { name, value, type } = event.target
     setFormData(prevState => ({
       ...prevState,
       [name]: type === 'radio' ? value === 'true' : value
-    }));
-  };
-
-  const goBack = () => {
-    route.back();
+    }))
   }
 
   const onCreate = () => {
     chatRoomService.insert({ roomName: formData.title, nickname, dispatch })
       .then(result => {
         if (typeof result === 'string' && !formData.public) {
-          chatRoomService.modifyPassword({ roomId: result, password: formData.password, nickname, dispatch });
+          chatRoomService.modifyPassword({ roomId: result, password: formData.password, nickname, dispatch })
         }
       })
   }
@@ -70,7 +66,7 @@ export default function ChatAdd() {
         <div>
           <button type="submit" className="p-3 bg-green-400 text-white rounded-lg">생성하기</button>
           <button type="button" className="p-3 text-green-400 bg-white rounded-lg mx-2"
-            onClick={goBack}>뒤로가기
+            onClick={() => {route.back()}}>뒤로가기
           </button>
         </div>
       </form>

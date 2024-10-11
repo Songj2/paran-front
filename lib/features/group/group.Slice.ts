@@ -7,7 +7,7 @@ import {
   JoiningModel,
 } from '@/app/model/group/group.model';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+import { RootState } from '@/lib/store';
 
 
 const groupSlice = createSlice({

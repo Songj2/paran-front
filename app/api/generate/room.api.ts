@@ -7,7 +7,7 @@ export const roomAPI = {
 
     modify(roomModel: RoomUpdateModel) { return api.put<RoomModel>(`${requests.fetchRooms}`, roomModel); },
 
-    drop(id: number) { return api.delete<boolean>(requests.fetchRooms + `/${id}`) },
+    drop(id: number) { return api.delete<boolean>(`${requests.fetchRooms} + /${id}`) },
 
     findByUser(nickname: string, page: number, size: number) { return api.get<Page<RoomModel>>(requests.fetchRooms + `/user`, { params: { nickname, page, size } }); },
 

@@ -43,44 +43,38 @@ export default function Details({ roomId }: roomDetailProps) {
   }, {});
   return (
     <div>
-      <div className="h-[300px] w-full justify-center bg-gray-400">
-        메인 상세보기
-        <p>가게명: {room?.name}</p>
-        <p>이용 정원: {room?.maxPeople} 명</p>
-        <p>단독 사용 여부: {room?.opened ? "O" : "X"}</p>
-        <p>이용 가능 시간: {room?.openTime} ~ {room?.closeTime}</p>
-        <p>시간당 이용 금액: {room?.price}원</p>
-        <p>이용 가능 시간 {groupedTimes && Object.keys(groupedTimes).map((date) => (
-          <p key={date}>
-            <p>{date}</p>
-            {groupedTimes[date].map((time) => (
-              <span key={time.id}>{time.time} </span>
-            ))}
-          </p>
-        ))}</p>
-      </div>
-      <div className="my-6 grid min-h-screen grid-cols-2 place-items-center">
-        <div className="h-[70%] w-4/5 bg-gray-400">안에 내용 넣기</div>
+      <div className="flex justify-center gap-3 w-[80%] items-center mx-auto my-8">
         <Image
-          width={400}
-          height={380}
-          className="cursor-pointer rounded-t-lg"
-          src={getRoomImage(file?.path) ?? `process.env.NEXT_PUBLIC_IMAGE_DEFAULT`}
+          width={600}
+          height={400}
+          className="cursor-pointer rounded-lg bg-green-400"
+          src={getRoomImage(file?.path) || `${process.env.NEXT_PUBLIC_IMAGE_DEFAULT}`}
           alt={`cover of ${room?.title}`}
           priority
         />
-        <div className="h-[70%] w-4/5 bg-gray-400">안에 내용 넣기</div>
-        <div className="col-span-2 h-[70%] w-[90%] bg-gray-400">
-          안에 내용 넣기
+
+      </div>
+      <hr className="my-8 w-[80%] mx-auto" />
+      <div className="w-[45rem] mx-auto my-8">
+        <div className="h-[300px] p-8 w-full justify-center bg-green-50 rounded-lg">
+          <p className="mb-2">가게명: {room?.name}</p>
+          <p className="mb-2">이용 정원: {room?.maxPeople} 명</p>
+          <p className="mb-2">단독 사용 여부: {room?.opened ? "O" : "X"}</p>
+          <p className="mb-2">이용 가능 시간: {room?.openTime} ~ {room?.closeTime}</p>
+          <p className="mb-2">시간당 이용 금액: {room?.price}원</p>
+          <p className="mb-2">이용 가능 시간 {groupedTimes && Object.keys(groupedTimes).map((date) => (
+            <p key={date}>
+              <p>{date}</p>
+              {groupedTimes[date].map((time) => (
+                <span key={time.id}>{time.time} </span>
+              ))}
+            </p>
+          ))}</p>
         </div>
-        <div className="h-[70%] w-4/5 bg-gray-400">안에 내용 넣기</div>
-        <div className="h-[70%] w-4/5 bg-gray-400">안에 내용 넣기</div>
-        <div className="col-span-2 h-[70%] w-full bg-gray-400">
-          안에 내용 넣기
-        </div>
+
       </div>
 
-      <DetailButton thisPage="/rooms" displayReview="block" displayReservation="block" />
+      <DetailButton thisPage="/rooms" displayBoard="none" displayReview="block" displayReservation="block" />
     </div >
   );
 }

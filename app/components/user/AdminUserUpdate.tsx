@@ -3,33 +3,39 @@ import { useState, useEffect } from "react"
 import Alert from "../common/Alert"
 import { useAppDispatch } from "@/lib/store";
 import { useSelector } from "react-redux";
-import { getCurrentUser, modifyUserRole } from "@/lib/features/user.Slice";
+import { getCurrentUser, saveUserRole } from "@/lib/features/users/user.slice";
+import { RootState } from "@/lib/store"; // RootState 임포트 경로 수정
+import { UserModel } from "@/app/model/user.model";
+import { userService } from "@/app/service/user/user.service";
 
 export default function AdminUserUpdate() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-  const dispatch = useAppDispatch();
-  const user = useSelector(getCurrentUser);
-
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedRole, setSelectedRole] = useState<string>("")
+  const dispatch = useAppDispatch()
+  const user = useSelector((state: RootState) => getCurrentUser(state));
+  
   useEffect(() => {
-    if (user) {
+    if (user?.role) {
       setSelectedRole(user.role);
     }
   }, [user]);
 
-  const handleRoleChange = (e) => {
-    setSelectedRole(e.target.value);
-  };
-
-  const onSetRank = (e) => {
+  const onSetRank = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    dispatch(updateUserRole({ userId: user.id, newRole: selectedRole }))
-      .then(() => {
-        setIsOpen(true);
-      })
-      .catch((error) => {
-        console.error("Error updating user role:", error);
-      });
+    const newRole = e.target.value;
+    setSelectedRole(newRole);
+
+    if (user) {
+      dispatch(saveUserRole({ nickname: user?.nickname ?? "", role: newRole }))
+        .then(() => {
+          setIsOpen(true);
+        })
+        .catch((error: Error) => {
+          console.error("user role 업데이트에 실패했습니다:", error);
+        });
+    } else {
+      console.error("현재 사용자 정보를 찾을 수 없습니다.");
+    }
   };
 
   return (
@@ -44,16 +50,16 @@ export default function AdminUserUpdate() {
         <li className="flex items-center justify-center">
           <h2 className="mx-3">유저 등급</h2>
 
-          <form onSubmit={onSetRank}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <select 
               id="selectRank" 
-              value={selectedRole} 
-              onChange={handleRoleChange}
+              onChange={onSetRank}
+              value={selectedRole}
             >
               <option value="seller">노랑 회원 - 판매자</option>
               <option value="user">초록 회원 - 일반</option>
             </select>
-            <button type="submit" className="m-2 rounded-lg bg-green-50 px-4 py-2 text-center border-2 border-green-400 text-sm font-medium text-gray-900 hover:bg-green-400 hover:text-white">
+            <button type="button" onClick={() => onSetRank({ target: { value: selectedRole } } as React.ChangeEvent<HTMLSelectElement>)} className="m-2 rounded-lg bg-green-50 px-4 py-2 text-center border-2 border-green-400 text-sm font-medium text-gray-900 hover:bg-green-400 hover:text-white">
               등급수정
             </button>
           </form>

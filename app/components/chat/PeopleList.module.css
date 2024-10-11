@@ -1,10 +1,35 @@
 .visible {
-    visibility: visible;
-    opacity: 100;
+  visibility: visible;
+  opacity: 100;
 }
   
-  .invisible {
-    visibility: hidden;
-    opacity: 0;
-  }
+.invisible {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.onlineStatus {
+  position: absolute;
+  left: 1.75rem; /* left-7 in Tailwind is 1.75rem */
+  top: 0;
+  height: 0.875rem; /* h-3.5 in Tailwind is 0.875rem */
+  width: 0.875rem; /* w-3.5 in Tailwind is 0.875rem */
+  border-radius: 9999px; /* rounded-full */
+  border-width: 2px;
+  border-color: white;
+}
+  
+.online {
+  composes: onlineStatus;
+  background-color: #4ade80; /* bg-green-400 */
+}
+.offline {
+  composes: onlineStatus;
+  background-color: #f87171; /* bg-red-400 */
+}
+  
+/* For dark mode */
+:global(.dark) .onlineStatus {
+  border-color: #1f2937; /* dark:border-gray-800 */
+}
   

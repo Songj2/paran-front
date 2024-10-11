@@ -7,7 +7,11 @@ export const roomSlice = createSlice({
     initialState: initialRoomState,
     reducers: {
         saveRooms: (state, action: PayloadAction<RoomModel[]>) => {
-            state.rooms = action.payload;
+            action.payload.forEach(newRoom => {
+                if (!state.rooms.some(room => room.id === newRoom.id)) {
+                    state.rooms.push(newRoom);
+                }
+            });
         },
         saveCurrentRoom: (state, action: PayloadAction<RoomModel | null>) => {
             state.currentRoom = action.payload;

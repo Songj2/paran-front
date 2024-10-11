@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@/lib/store';
 import { BookResponseModel, initialBookState, LikeBookModel } from '@/app/model/group/book.model';
 
 export const bookSlice = createSlice({
@@ -21,22 +21,30 @@ export const bookSlice = createSlice({
     saveCurrentBook: (state, action: PayloadAction<BookResponseModel | null>) => {
       state.currentBook = action.payload;
     },
+    saveTotalPage: (state, action: PayloadAction<number>) => {
+      state.totalPage = action.payload;
+    },
     saveLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
     saveError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     }
-  
+   
   }
 });
 
 // Selector 함수들
 export const getBooks = (state: RootState) => state.book.books;
 export const getCurrentBook = (state: RootState) => state.book.currentBook;
-export const getLikedBooks = (state: RootState) => state.book.likedBooks;
 export const getIsLoading = (state: RootState) => state.book.isLoading;
 export const getError = (state: RootState) => state.book.error;
+export const getLikedBooks = (state: RootState) => state.book.likedBooks;
+export const getIsBookLiked = createSelector(
+  [getLikedBooks, (_, bookId) => bookId],
+  (likedBooks, bookId) => likedBooks.some(likedBook => likedBook.id === bookId)
+);
+export const getTotalPage = (state: RootState) => state.book.totalPage;
 
 export const {
   saveBooks,
@@ -44,24 +52,9 @@ export const {
   saveCurrentBook,
   saveLikedBooks,
   deleteLikedBook,
+  saveTotalPage,
   saveLoading,
   saveError
 } = bookSlice.actions;
 
 export default bookSlice.reducer;
-function createAsyncThunk(arg0: string, arg1: ({ page, size }: { page: number; size: number; }, { dispatch }: { dispatch: any; }) => Promise<any>) {
-  throw new Error('Function not implemented.');
-}
-
-function findBookList(page: number, size: number) {
-  throw new Error('Function not implemented.');
-}
-
-function selectFileList(bookIds: any, arg1: string) {
-  throw new Error('Function not implemented.');
-}
-
-function saveFiles(files: any): any {
-  throw new Error('Function not implemented.');
-}
-

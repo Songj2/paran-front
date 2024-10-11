@@ -17,17 +17,13 @@ const InputField = ({
 
     if (textarea) {
       const adjustHeight = () => {
-        textarea.style.height = "auto"; // 높이를 초기화
-        textarea.style.height = `${textarea.scrollHeight}px`; // scrollHeight만큼 높이 설정
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
       };
 
-      // 'input' 이벤트에 adjustHeight 함수 연결
       textarea.addEventListener("input", adjustHeight);
-
-      // 초기 높이 설정
       adjustHeight();
 
-      // 컴포넌트 언마운트 시 이벤트 제거
       return () => {
         textarea.removeEventListener("input", adjustHeight);
       };
@@ -44,11 +40,9 @@ const InputField = ({
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();  // form 제출 시 새로고침 방지
-    sendMessage();       // 메시지 전송
+    e.preventDefault(); 
+    sendMessage();       
   };
-
-  // text -> 글자 작성할때 위로 올라가면서 작성 되도록 함.
 
   return (
     <div className={styles.inputArea}>

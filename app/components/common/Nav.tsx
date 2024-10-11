@@ -17,36 +17,12 @@ export default function Nav() {
               <Link
                 href="/List"
                 className={`block rounded py-2 ${
-                activeTab === 'Rooms' ? ' text-green-600 md:hover:text-green-700  md:hover:bg-transparent' : ''
-               }`}
-               onClick={() => handleTabClick('Rooms')}
-                aria-current="page"
-              >
-                공간 대여
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/List"
-                className={`block rounded py-2 ${
                   activeTab === 'Groups' ? ' text-green-600  md:hover:text-green-700  md:hover:bg-transparent' : ''
                  }`}
                  onClick={() => handleTabClick('Groups')}
                   aria-current="page"
               >
-                소모임
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/List"
-                className={`block rounded py-2 ${
-                  activeTab === 'Books' ? ' text-green-600  md:hover:text-green-700 md:hover:bg-transparent': ''
-                 }`}
-                 onClick={() => handleTabClick('Books')}
-                  aria-current="page"
-              >
-                도서
+                파란만장 서비스 보러가기
               </Link>
             </li>
             <li>

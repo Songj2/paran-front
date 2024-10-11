@@ -51,7 +51,7 @@ const findAll = async (page: number, size: number, dispatch: AppDispatch): Promi
         }
     } catch (error: any) {
         dispatch(saveError("게시물 목록 조회 중 오류 발생했습니다."));
-        console.error('Error fetching Aposts:', error.response?.data || error.message);
+        console.error('Error fetching Aposts :', error.response?.data || error.message);
         throw new Error('게시물 목록 조회 중 오류 발생');
     } finally {
         dispatch(saveLoading(false));

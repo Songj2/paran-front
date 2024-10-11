@@ -1,13 +1,13 @@
 import { fileAPI } from '@/app/api/generate/file.api';
 import { FileDeleteModel, FileType } from '@/app/model/file/file.model';
-import { addFile, removeFile, saveFiles, upLoading } from '@/lib/features//file/file.slice';
+import { addFile, removeFile, saveFiles, upLoading } from '@/lib/features/file/file.slice';
 import { AppDispatch } from '@/lib/store';
 
 // 파일 리스트 조회
-const selectFileList = async (refIdList: number[], type: string, dispatch: AppDispatch): Promise<void> => {
+const selectFileList = async (refIds: number[], type: string, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(upLoading(true))
-        const response = await fileAPI.findAll(refIdList, type);
+        const response = await fileAPI.findAll(refIds, type);
         dispatch(saveFiles(response.data))
     } catch (error) {
         console.error('Error select files:', error);

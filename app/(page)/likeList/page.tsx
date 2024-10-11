@@ -2,29 +2,30 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import ComLikeList from "@/app/components/user/ComLikeList";
+import Link from "next/link";
 
-type TabType = "All" | "Groups" | "Rooms";
+type TabType = "그룹" | "도서" | "장소";
 
 export default function LikeList() {
-    const [activeTab, setActiveTab] = useState<TabType>("All");
+    const [activeTab, setActiveTab] = useState<TabType>("그룹");
     const router = useRouter();
 
     const goBack = () => router.back();
 
     const renderContent = () => {
         switch (activeTab) {
-            case "All":
+            case "그룹":
                 return (
                     <>
-                        <ComLikeList type="all"/>
-                        <ComLikeList type="all"/>
-                        <ComLikeList type="all"/>
+                        <ComLikeList type="그룹"/>
+                        <ComLikeList type="도서"/>
+                        <ComLikeList type="장소"/>
                     </>
                 );
-            case "Groups":
-                return <ComLikeList type="groups"/>;
-            case "Rooms":
-                return <ComLikeList type="rooms"/>;
+            case "도서":
+                return <ComLikeList type="도서"/>;
+            case "장소":
+                return <ComLikeList type="장소"/>;
             default:
                 return null;
         }
@@ -34,9 +35,9 @@ export default function LikeList() {
         <div className="max-w-lg p-6 my-8 mx-auto bg-green-100">
             <div className="mb-4">
                 <ul className="flex border-b">
-                    {["All", "Groups", "Rooms"].map((tab) => (
+                    {["그룹", "도서" ,"장소"].map((tab) => (
                         <li key={tab} className="-mb-px mr-1">
-                            <a
+                            <Link
                                 href="#"
                                 className={`inline-block py-2 px-4 text-sm font-semibold ${
                                     activeTab === tab
@@ -49,7 +50,7 @@ export default function LikeList() {
                                 }}
                             >
                                 {tab}
-                            </a>
+                            </Link>
                         </li>
                     ))}
                 </ul>

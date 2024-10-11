@@ -24,7 +24,7 @@ const insert = async ({ roomId, nickname, dispatch }: {
     roomId: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<boolean> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatUserAPI.insert(roomId, nickname);
@@ -54,7 +54,7 @@ const drop = async ({ roomId, nickname, dispatch }: {
     roomId: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<boolean> => {
+}): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatUserAPI.drop(roomId, nickname);

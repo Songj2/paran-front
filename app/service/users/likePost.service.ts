@@ -38,7 +38,7 @@ const drop = async (likePostModel: LikePostModel, dispatch: AppDispatch): Promis
 };
 
 // 좋아요 마이페이지 확인
-const findAllByUserNickname = async (nickname: String, dispatch: AppDispatch): Promise<void> => {
+const findAllByUserNickname = async (nickname: string, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(saveLoading(true));
         const response = await likePostAPI.findLikePostList(nickname)

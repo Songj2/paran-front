@@ -1,19 +1,18 @@
-// src/services/userService.ts
 import api from '../axios';
 import requests from "@/app/api/requests";
-import {} from "@/app/model/user/user.model";
-import {AdminPostModel, DeclarationPostModel, FriendModel, LikePostModel, LikeRoomModel} from "@/app/model/user/users.model";
-import {ExceptionResponseModel} from "@/app/model/error.model";
-//insert, drop, modify, find**
+import { LikePostModel } from "@/app/model/user/users.model";
+import { ExceptionResponseModel } from "@/app/model/error.model";
 
 export const likePostAPI = {
     insert: (likePostModel: LikePostModel) => {
         return api.post<LikePostModel | ExceptionResponseModel>(requests.fetchUsers + `/likeposts/add`, likePostModel);
     },
     drop: (likePostModel: LikePostModel) => {
-        return api.delete<boolean | ExceptionResponseModel>(requests.fetchUsers + '/likeposts/remove', likePostModel);
+        return api.delete<boolean | ExceptionResponseModel>(requests.fetchUsers + `/likeposts/remove`, {
+            data: likePostModel
+        });
     },
-    findLikePostList: (nickname: String) => {
+    findLikePostList: (nickname: string) => {
         return api.get<LikePostModel[]>(requests.fetchUsers + `/likeposts/list/${nickname}`);
     }
 }

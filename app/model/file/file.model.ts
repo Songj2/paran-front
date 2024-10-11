@@ -10,7 +10,7 @@ export interface FileModel {
     id: string;
     type: FileType;
     path: string;
-    refId: number;
+    refId: number
     uploadAt: Date;
 }
 

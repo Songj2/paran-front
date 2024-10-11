@@ -9,7 +9,6 @@ interface CardRowProps {
     chatRoom: ChatRoomModel
 }
 
-//Path variable 로 받은 id 값으로 연결하기
 export default function CardRow({
     chatRoom
 }: CardRowProps) {

@@ -7,6 +7,9 @@ import ChatRoomLayout from "./ChatRoomLayout";
 import { useChatRoom } from "@/app/hooks/useChatRoom";
 import { getCurrentChatRoom, getError, getIsLoading } from "@/lib/features/chat/chat.slice";
 import { useAppDispatch } from "@/lib/store";
+import ErrorMessage from "../common/status/ErrorMessage";
+import LoadingSpinner from "../common/status/LoadingSpinner";
+import { getCurrentUser } from "@/lib/features/users/user.slice";
 
 const ChatPage = dynamic(() => import("@/app/components/chat/ChatPages/ChatPage"), { ssr: false });
 const MyChatList = dynamic(() => import("@/app/components/chat/MyChatList"), { ssr: false });
@@ -14,14 +17,13 @@ const PeopleList = dynamic(() => import("@/app/components/chat/PeopleList"), { s
 const MyProfile = dynamic(() => import("@/app/components/chat/MyProfile"), { ssr: false });
 
 export default function ChatRoom() {
-    const router = useRouter();
     const dispatch = useAppDispatch();
-    const chatRoom = useSelector(getCurrentChatRoom);
-    const loading = useSelector(getIsLoading);
-    const error = useSelector(getError);
-
-    const nickname = "A"; // TODO: 실제 사용자 닉네임으로 대체
-    const roomId = chatRoom?.roomId ?? '';
+    const chatRoom = useSelector(getCurrentChatRoom)
+    const loading = useSelector(getIsLoading)
+    const error = useSelector(getError)
+    const user = useSelector(getCurrentUser)
+    const nickname = user?.nickname ?? ''
+    const roomId = chatRoom?.roomId ?? ''
 
     const {
         messages,
@@ -31,19 +33,9 @@ export default function ChatRoom() {
         leaveChat
     } = useChatRoom(roomId, nickname, dispatch);
 
-    useEffect(() => {
-        if (error) {
-            // 에러 처리 로직
-        }
-    }, [error]);
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorMessage message={error} />;
 
-    if (loading) {
-        return <div>로딩 중...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
 
     return (
         <ChatRoomLayout

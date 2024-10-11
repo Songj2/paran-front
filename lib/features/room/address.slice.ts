@@ -2,6 +2,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialAddressState, AddressModel, AddressUpdateModel } from '../../../app/model/room/address.model';
+import { RootState } from '@/lib/store';
 
 const addressSlice = createSlice({
     name: 'address',
@@ -34,10 +35,10 @@ const addressSlice = createSlice({
     },
 });
 
-export const getAddresses = (state: any) => state.addresses;
-export const getCurrentAddress = (state: any) => state.currentAddress;
-export const getIsLoading = (state: any) => state.isLoading;
-export const getError = (state: any) => state.error;
+export const getAddresses = (state: RootState) => state.address.addresses;
+export const getCurrentAddress = (state: RootState) => state.address.currentAddress;
+export const getIsLoading = (state: RootState) => state.address.isLoading;
+export const getError = (state: RootState) => state.address.error;
 
 
 export const {

@@ -70,8 +70,11 @@ export const groupApi = {
             }
         });
     },
+    
     dropUser(nickname: string, groupId: number) {
-        return api.delete<Boolean>(`${requests.fetchGroups}/users/${groupId}`, {nickname});
+        return api.delete<Boolean>(`${requests.fetchGroups}/users/${groupId}`, {
+            params: { nickname }
+        });
     }
 }
 

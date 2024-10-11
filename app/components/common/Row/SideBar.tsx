@@ -1,14 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import SideBarTab from "./SideBarTab";
 import ContentArea from "./ContentArea";
-import { FaBook, FaSchool, } from "react-icons/fa";
+import { FaBook, FaSchool } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6"
 import { MdMessage } from "react-icons/md";
 import SellerButton from "../../user/seller/SellerButton";
-import getUserId from "@/app/(page)/users/[id]/page";
+import { useSelector } from "react-redux";
+import { getCurrentUser } from "@/lib/features/users/user.slice";
+import { initialGroupState } from "@/app/model/group/group.model";
 
-const tabs = [
+const allTabs = [
   { name: "Groups", icon: <FaUserGroup />, label: "우리들의 모임" },
   { name: "Rooms", icon: <FaSchool />, label: "우리들의 공간" },
   { name: "Books", icon: <FaBook />, label: "우리들의 책" },
@@ -17,13 +19,25 @@ const tabs = [
 
 export default function SideBar() {
   const [activeTab, setActiveTab] = useState("Groups");
+  const userInfo = useSelector(getCurrentUser);
+  const user = useSelector(getCurrentUser);
+  const group = initialGroupState
+  const userGroups = group.groupMembers ? user?.nickname : null ;
+  
+  const tabs = useMemo(() => {
+    // 사용자가 그룹에 참여 중이면 모든 탭을 표시
+    if (userGroups && userGroups.length > 0) {
+      console.log(user);
+      return allTabs; 
+    } else {
+      // 그룹에 참여하지 않았으면 Chats 탭을 제외
+      return allTabs.filter(tab => tab.name !== "Chats"); 
+    }
+  }, [userGroups]);
 
   return (
     <div>
-      {/* {getUserId == 'seller' ?
-         <SellerButton/> 
-         :
-      } */}
+      {user?.role === 'ROLE_seller' && <SellerButton />}
       <div className="flex min-h-screen w-full">
         <aside id="default-sidebar" className="w-64 bg-green-100" aria-label="Sidebar">
           <div className="h-full overflow-y-auto px-3 py-4">
@@ -43,5 +57,4 @@ export default function SideBar() {
       </div>
     </div>
   );
-
 }

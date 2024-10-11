@@ -9,9 +9,9 @@ export const reviewAPI = {
 
     drop(id: number) { return api.delete<boolean>(requests.fetchRooms + `/reviews/${id}`); },
 
-    findAll(page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + '/reviews', { param: { page, size } }); },
+    findAll(page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + '/reviews', { params: { page, size } }); },
 
-    findByRoom(roomId: number, page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + `/reviews/room/${roomId}`, { param: { page, size } }); },
+    findByRoom(roomId: number, page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + `/reviews/room/${roomId}`, { params: { page, size } }); },
 
-    findByUser(nickname: string, page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + `/reviews`, { param: { nickname, page, size } }); },
+    findByUser(nickname: string, page: number, size: number) { return api.get<Page<ReviewModel>>(requests.fetchRooms + `/reviews`, { params: { nickname, page, size } }); },
 }

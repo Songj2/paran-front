@@ -7,7 +7,7 @@ export interface UserModel {
 
 // 상태 인터페이스 정의
 interface UserState {
-  currentUser: UserModel | null;
+  currentUser?: UserModel;
   users: UserModel[];
   isLoading: boolean;
   error: string | null;
@@ -15,7 +15,7 @@ interface UserState {
 
 // 초기 상태
 export const initialUserState: UserState = {
-  currentUser: null,
+  currentUser: {} as UserModel,
   users: [],
   isLoading: false,
   error: null
