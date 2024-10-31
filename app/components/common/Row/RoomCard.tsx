@@ -1,38 +1,34 @@
-import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { RoomModel } from '@/app/model/room/room.model';
 
 interface RoomCardProps {
-  room: RoomModel;
-  isActive: boolean;
-  getRoomImage: (roomId: number | undefined) => string;
-  onClickToDetail: (currentId: number | undefined) => void;
+  room: RoomModel
+  isActive: boolean
+  onSelect: () => void
+  getRoomImage: (roomId: number | undefined) => string
+  onClickToDetail: (currentId: number | undefined) => void
 }
 
-const RoomCard = ({ room, isActive, getRoomImage, onClickToDetail }: RoomCardProps) => (
-  <div className="relative max-w-sm" key={room.id}>
+const RoomCard = ({ room, isActive, getRoomImage, onClickToDetail, onSelect }: RoomCardProps) => (
+  <div key={room.id}>
     <div
-      className={`max-w-sm rounded-lg border border-gray-200 bg-white shadow ${isActive ? 'ring-2 ring-green-500' : ''}`}
+      className={`max-w-80 rounded-lg border border-gray-200 bg-white shadow ${isActive ? 'ring-2 ring-green-500' : ''}`}
+      onClick={onSelect}
     >
-      <Link href={`/rooms/${room.id}`} passHref>
-        <Image
-          width={400}
-          height={380}
-          className="size-80 cursor-pointer rounded-t-lg object-cover"
-          src={getRoomImage(room.id)}
-          alt={`cover of ${room.title}`}
-          priority
-        />
-      </Link>
+      <Image
+        width={400}
+        height={380}
+        className="w-80 h-40 cursor-pointer rounded-t-lg object-cover"
+        src={getRoomImage(room.id)}
+        alt={`cover of ${room.title}`}
+        priority
+      />
       <div className="p-5">
-        <Link href={`/rooms/${room.id}`}>
-          <h5
-            className={`mb-2 text-lg font-medium tracking-tight ${isActive ? 'text-green-600' : 'text-gray-900'}`}
-          >
-            {room.name}
-          </h5>
-        </Link>
+        <h5
+          className={`mb-2 text-lg font-medium tracking-tight ${isActive ? 'text-green-600' : 'text-gray-900'}`}
+        >
+          {room.name}
+        </h5>
         <p className="mb-3 text-sm font-medium text-gray-700">
           {room.price.toLocaleString("ko-kr")}원
         </p>

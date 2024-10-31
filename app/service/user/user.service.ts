@@ -1,16 +1,19 @@
-import { UserModel } from "@/app/model/user/user.model";
+import { RegisterModel, UserModel } from "@/app/model/user/user.model";
 import { AppDispatch } from "@/lib/store";
-import { logoutUser, saveError, saveLoading, saveSuccess, saveUserList } from "@/lib/features/users/user.slice";
+import { deleteUser, logoutUser, saveCurrentUser, saveError, saveLoading, saveSuccess, saveUserList } from "@/lib/features/users/user.slice";
 import userAPI from "@/app/api/generate/user.api";
-import axios from "axios";
 
 // 사용자 등록
-const insertUser = async (userModel: UserModel, dispatch: AppDispatch): Promise<void> => {
+const insertUser = async (registerModel: RegisterModel, isSeller: boolean, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(saveLoading(true));
-        const response = await userAPI.insert(userModel);
-
-        if ('id' in response.data && 'nickname' in response.data) {
+        const response = await userAPI.insert(registerModel);
+        console.log("회원가입 결과: ", response);
+        if (response.data) {
+            if (isSeller && registerModel.nickname) {
+                console.log(registerModel.nickname)
+                modifyRole(registerModel.nickname, "ROLE_SELLER", dispatch)
+            }
             dispatch(saveSuccess("사용자가 성공적으로 등록되었습니다."));
         } else {
             throw new Error('사용자 등록 실패');
@@ -25,7 +28,7 @@ const insertUser = async (userModel: UserModel, dispatch: AppDispatch): Promise<
 };
 
 // 비밀번호 수정
-export const modifyPassword = async (nickname: string, newPassword: string, dispatch: AppDispatch): Promise<void> => {
+const modifyPassword = async (nickname: string, newPassword: string, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(saveLoading(true));
         const response = await userAPI.modifyPassword(nickname, newPassword);
@@ -45,11 +48,12 @@ export const modifyPassword = async (nickname: string, newPassword: string, disp
 };
 
 // 권한 수정
-const modifyRole = async (nickname: string, newRole: string, dispatch: AppDispatch): Promise<void> => {
+const modifyRole = async (nickname: string, newRole: string, dispatch: AppDispatch): Promise<any> => {
     try {
         dispatch(saveLoading(true));
+        console.log("dispatch 연결 됨.", dispatch)
         const response = await userAPI.modifyRole(nickname, newRole);
-
+        console.log("response 확인용", response)
         if (response.status === 200) {
             dispatch(saveSuccess("권한이 성공적으로 수정되었습니다."));
         } else {
@@ -104,26 +108,23 @@ const findAllUsers = async (nickname: string, dispatch: AppDispatch): Promise<vo
     }
 };
 
-export const findUserDetail = async (nickname: string, dispatch: AppDispatch): Promise<UserModel> => {
+const findUserDetail = async (nickname: string, dispatch: AppDispatch): Promise<any> => {
     try {
-        const response = await axios.get(`/api/users/getUserDetail?nickname=${nickname}`);
-        const userData: UserModel = response.data; // response.data가 UserModel 타입인지 확인
-
-        // Redux에 유저 데이터 저장
-        dispatch({ type: 'SET_USER', payload: userData });
-
-        return userData; // UserModel 반환
+        const response = await userAPI.findDetailUser(nickname);
+        console.log("findUserDetail", response);
+        // 현재 로그인 한 유저의 정보를 담음.
+        dispatch(saveCurrentUser(response.data));
     } catch (error) {
         console.error("Error fetching user detail:", error);
-        throw error; // 에러 발생 시 throw
+        throw error; 
     }
-};
+}
+
 // 권한 확인
 const checkRole = async (nickname: string, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(saveLoading(true)); // 로딩 상태 시작
-        const response = await userAPI.checkRole(nickname); // 사용자 권한 확인 API 호출
-
+        const response = await userAPI.checkRole(nickname); // 사용자 권한 확인 API 호출 이거 안됨
         if (response.data) {
             dispatch(saveSuccess("확인 완료")); // 권한 정보를 저장하는 액션
         } else {
@@ -139,16 +140,19 @@ const checkRole = async (nickname: string, dispatch: AppDispatch): Promise<void>
 };
 
 // 회원 탈퇴
-const dropUser = async (nickname: string, dispatch: AppDispatch): Promise<void> => {
+const dropUser = async (nickname: string, dispatch: AppDispatch): Promise<any> => {
     try {
         dispatch(saveLoading(true));
         const response = await userAPI.drop(nickname);
 
         if (response.status === 200) {
             dispatch(saveSuccess("사용자가 성공적으로 삭제되었습니다."));
+            dispatch(deleteUser(nickname))
         } else {
             throw new Error('회원 탈퇴 실패');
         }
+        console.log("user drop 확인 : ", response.data)
+        return response.data
     } catch (error: any) {
         const errorMessage = error.response?.data?.message || "회원 탈퇴 중 오류 발생했습니다.";
         dispatch(saveError(errorMessage));

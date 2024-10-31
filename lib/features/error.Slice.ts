@@ -1,13 +1,13 @@
 // errorSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ErrorState, initialErrorState, ExceptionResponseModel } from '../../app/model/error.model';
+import { initialErrorState, ExceptionResponseModel } from '../../app/model/error.model';
 import { RootState } from '../store';
 
 const errorSlice = createSlice({
     name: 'error',
     initialState: initialErrorState,
     reducers: {
-        saveCurrentError: (state, action: PayloadAction<ExceptionResponseModel | null>) => {
+        saveCurrentError: (state, action: PayloadAction<ExceptionResponseModel>) => {
             state.currentError = action.payload;
             state.isError = action.payload !== null;
             if (action.payload) {
@@ -15,7 +15,7 @@ const errorSlice = createSlice({
             }
         },
         clearCurrentError: (state) => {
-            state.currentError = null;
+            state.currentError = {} as ExceptionResponseModel;
             state.isError = false;
         },
         addToErrorHistory: (state, action: PayloadAction<ExceptionResponseModel>) => {

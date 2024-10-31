@@ -4,25 +4,13 @@ import { ChatUserModel } from "@/app/model/chat/chat.model";
 
 const chatUserAPI = {
     insert(roomId: string, nickname: string) {
-        return api.post<Boolean>(`${requests.fetchChats}/users?roomId=${roomId}`, {
-            headers: {
-                'nickname': nickname
-            }
-        });
+        return api.post<Boolean>(`${requests.fetchChats}/users?roomId=${roomId}&nickname=${nickname}`);
     },
     findList(roomId: string) {
-        return api.get<Boolean | ChatUserModel>(`${requests.fetchChats}/users/list/${roomId}`, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        return api.get<Boolean | ChatUserModel>(`${requests.fetchChats}/users/list/${roomId}`);
     },
     drop(roomId: string, nickname: string) {
-        return api.delete<Boolean>(`${requests.fetchChats}/users/${roomId}`, {
-            headers: {
-                'nickname': nickname
-            }
-        })
+        return api.delete<Boolean>(`${requests.fetchChats}/users/${roomId}?nickname=${nickname}`)
     },
 };
 

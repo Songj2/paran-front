@@ -10,49 +10,44 @@ declare global {
 
 const KakaoChat = () => {
   useEffect(() => {
-    // Kakao SDK 로드 후에만 실행"
     const initializeKakao = () => {
       if (window.Kakao && !window.Kakao.isInitialized()) {
-       // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY); // 사용하려는 앱의 JavaScript 키 입력
-        window.Kakao.init('wqrewdhfjkdsfhksjgs'); // 사용하려는 앱의 JavaScript 키 입력
+        // 환경 변수로부터 JavaScript 키 사용
+        window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
       }
 
-      // DOM이 렌더링된 후에 채널 버튼 생성
-      const chatbuttonContainer = document.getElementById(
-        "chat-channel-button",
-      );
+      // 채팅 버튼 생성
+      const chatbuttonContainer = document.getElementById("chat-channel-button");
       if (chatbuttonContainer) {
         window.Kakao.Channel.createChatButton({
           container: "#chat-channel-button",
-          channelPublicId: "_xgEezn", // 채널의 공개 ID 입력
+          channelPublicId: process.env.NEXT_PUBLIC_KAKAO_CHANNEL_ID, // 환경 변수로 공개 ID 관리
         });
       } else {
         console.error("Chat button container not found");
       }
     };
 
-    // SDK가 로드되었는지 확인
     if (typeof window !== "undefined" && window.Kakao) {
       initializeKakao();
     } else {
-      // 만약 Kakao SDK가 로드되지 않았다면, Script가 로드된 후 초기화
+      // Kakao SDK가 로드될 때까지 대기
       const interval = setInterval(() => {
         if (window.Kakao) {
           clearInterval(interval);
           initializeKakao();
         }
-      }); // 100ms마다 Kakao 객체가 존재하는지 확인
+      }, 100); // 100ms 간격으로 확인
     }
   }, []);
 
-  // kakao chat api src 부분도 env 로 관리해야함. 
   return (
     <div>
       <Script
-        src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+        src={process.env.NEXT_PUBLIC_KAKAO_SDK_URL} // Kakao SDK URL을 환경 변수로 관리
         integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
         crossOrigin="anonymous"
-        strategy="afterInteractive"
+        strategy="afterInteractive" // 페이지가 인터랙티브 상태일 때 로드
       />
       <div id="chat-channel-button"></div>
     </div>

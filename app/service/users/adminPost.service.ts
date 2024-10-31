@@ -2,7 +2,7 @@ import { AdminPostModel } from "@/app/model/user/users.model";
 import { AppDispatch } from "@/lib/store";
 import { saveError, saveLoading } from "@/lib/features/users/user.slice";
 import { adminPostAPI } from "@/app/api/generate/adminPost.api";
-import { addAdminPost, deleteAdminPost, saveAdminPosts, updateAdminPost } from "@/lib/features/users/users.slice";
+import { addAdminPost, deleteAdminPost, saveAdminPosts, updateAdminPost } from "@/lib/features/users/adminPost.slice";
 //insert, drop, modify, find**
 
 
@@ -23,7 +23,6 @@ const insert = async (adminPostModel: AdminPostModel, dispatch: AppDispatch): Pr
     }
 };
 //게시물 수정
-
 const modify = async (id: number, adminPostModel: AdminPostModel, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(saveLoading(true));

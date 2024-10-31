@@ -1,14 +1,10 @@
-// src/services/userService.ts
 import api from '../axios';
 import requests from "@/app/api/requests";
-import {} from "@/app/model/user/user.model";
-import {AdminPostModel, DeclarationPostModel, FriendModel, LikePostModel, LikeRoomModel} from "@/app/model/user/users.model";
-import {ExceptionResponseModel} from "@/app/model/error.model";
-//insert, drop, modify, find**
+import {AdminPostModel} from "@/app/model/user/users.model";
 
 export const adminPostAPI = {
     findAdminPost: (page: number, size: number) => {
-        return api.get<Page<AdminPostModel>>(`${requests.fetchUsers}/aboard/list`, {
+        return api.get<Page<AdminPostModel>>(`${requests.fetchUsers}/aboard`, {
             params: {
                 page,
                 size
@@ -16,7 +12,7 @@ export const adminPostAPI = {
         });
     },
     findAdminPostByNickname: (page: number, size: number, nickname: string) => {
-        return api.get<Page<AdminPostModel>>(`${requests.fetchUsers}/aboard/myList/${nickname}`, {
+        return api.get<Page<AdminPostModel>>(`${requests.fetchUsers}/aboard/${nickname}`, {
             params: {
                 page,
                 size
@@ -27,17 +23,15 @@ export const adminPostAPI = {
         return api.get<AdminPostModel[]>(requests.fetchUsers + `/aboard/list/${id}`);
     },
     insert: (adminPostModel: AdminPostModel) => {
-        return api.post<AdminPostModel | ExceptionResponseModel>(requests.fetchUsers + '/aboard/add', adminPostModel);
+        return api.post<AdminPostModel>(requests.fetchUsers + '/aboard', adminPostModel);
     },
     modify: (id:number, adminPostModel: AdminPostModel) => {
-        return api.put<AdminPostModel | ExceptionResponseModel>(requests.fetchUsers + `/aboard/update/${id}`, adminPostModel);
+        return api.put<AdminPostModel>(requests.fetchUsers + `/aboard/${id}`, adminPostModel);
     },
     drop: (id: number) => {
-        return api.delete<Boolean | ExceptionResponseModel>(`/aboard/delete/${id}`);
+        return api.delete<Boolean>(`${requests.fetchUsers}/aboard/${id}`);
     },
     findAdminPostViewCount:(id:number) => {
         return api.get<number>(requests.fetchUsers + `aboard/viewcount/${id}`);
     }
 }
-
-export default adminPostAPI;

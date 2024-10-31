@@ -7,7 +7,7 @@ export enum FileType {
     BOOK = "book"
 }
 export interface FileModel {
-    id: string;
+    id?: string;
     type: FileType;
     path: string;
     refId: number

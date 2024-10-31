@@ -1,8 +1,8 @@
 import { AppDispatch } from "@/lib/store";
 import { saveBooks, saveError, saveLoading, saveTotalPage } from "@/lib/features/group/book.slice";
 import bookAPI from "@/app/api/generate/book.api";
-import { fileService } from "../file/file.service";
 import { FileType } from "@/app/model/file/file.model";
+import { fileService } from "../file/file.service";
 
 
 
@@ -13,6 +13,7 @@ const findList = async (page: number, size: number, dispatch: AppDispatch): Prom
         const response = await bookAPI.findList(page, size);
         const bookIds = response.data.content.map(book => book.id);
         fileService.selectFileList(bookIds, FileType.BOOK, dispatch);
+        console.log("책 리스트: ", response.data.content);
         dispatch(saveBooks(response.data.content));
         dispatch(saveTotalPage(response.data.totalPages))
     } catch (error) {

@@ -9,8 +9,7 @@ import { useSelector } from "react-redux";
 
 export default function ChatAdd() {
   const dispatch = useAppDispatch()
-  const user = useSelector(getCurrentUser)
-  const nickname = user?.nickname ?? ''
+  const nickname = useSelector(getCurrentUser)?.nickname as string;
   const route = useRouter()
 
   const [formData, setFormData] = useState({

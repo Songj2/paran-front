@@ -1,4 +1,4 @@
-import { GroupPostModel } from '@/app/model/group/group.model';
+import { GroupPostModel, GroupPostResponseModel } from '@/app/model/group/group.model';
 import { AppDispatch } from "@/lib/store";
 import {
     addGroupPost,
@@ -8,7 +8,8 @@ import {
     saveLoading,
     updateGroupPost
 } from "@/lib/features/group/group.slice";
-import groupPostAPI from "@/app/api/generate/groupPost.api";
+import { groupPostAPI } from '@/app/api/generate/groupPost.api';
+import { Retryer } from 'react-query/types/core/retryer';
 
 // 공통 에러 처리 함수
 const handleApiError = (error: any, dispatch: AppDispatch, message: string) => {
@@ -29,33 +30,44 @@ const handleLoading = async (dispatch: AppDispatch, callback: () => Promise<void
 };
 
 // 게시글 추가
-const insert = async (groupPostModel: GroupPostModel, dispatch: AppDispatch): Promise<void> => {
-    await handleLoading(dispatch, async () => {
-        try {
-            const response = await groupPostAPI.insert(groupPostModel);
-            if ('id' in response.data && 'name' in response.data) {
-                dispatch(addGroupPost(response.data));
-            }
-        } catch (error: any) {
-            handleApiError(error, dispatch, "게시글 등록 중 오류 발생했습니다.");
-            throw new Error('게시글 등록 중 오류 발생');
-        }
-    });
-};
+const insert = async (
+    groupPostModel: GroupPostModel,
+    dispatch: AppDispatch
+): Promise<GroupPostResponseModel> => {
 
-// 게시글 수정
-const modify = async (groupPostModel: GroupPostModel, dispatch: AppDispatch): Promise<void> => {
-    await handleLoading(dispatch, async () => {
-        try {
-            const response = await groupPostAPI.modify(groupPostModel);
-            if ('boardId' in response.data && 'title' in response.data) {
-                dispatch(updateGroupPost(response.data));
-            }
-        } catch (error: any) {
-            handleApiError(error, dispatch, "게시글 수정 중 오류 발생했습니다.");
-            throw new Error('게시글 수정 중 오류 발생');
+    try {
+        dispatch(saveLoading(true));
+        const response = await groupPostAPI.insert(groupPostModel);
+        // 응답 데이터 유효성 검사
+        if (response?.data?.id && response?.data?.title) {
+            dispatch(addGroupPost(response.data)); // Redux에 게시글 추가
+            return response.data; // 유효한 데이터 반환
+        } else {
+            throw new Error('유효하지 않은 응답입니다.');
         }
-    });
+    } catch (error: any) {
+        // API 에러 처리
+        handleApiError(error, dispatch, '게시글 등록 중 오류 발생했습니다.');
+        throw new Error('게시글 등록 중 오류 발생');
+    } finally {
+        dispatch(saveLoading(false));
+    }
+};
+// 게시글 수정
+const modify = async (groupPostModel: GroupPostModel, dispatch: AppDispatch): Promise<GroupPostResponseModel> => {
+    try {
+        dispatch(saveLoading(true));
+        const response = await groupPostAPI.modify(groupPostModel);
+        if ('id' in response.data && 'title' in response.data) {
+            dispatch(updateGroupPost(response.data));
+        }
+        return response.data
+    } catch (error: any) {
+        handleApiError(error, dispatch, "게시글 수정 중 오류 발생했습니다.");
+        throw new Error('게시글 수정 중 오류 발생');
+    } finally {
+        dispatch(saveLoading(false));
+    }
 };
 
 // 게시글 삭제
@@ -76,9 +88,8 @@ const findByGroupId = async (groupId: number, page: number, size: number, postCa
     await handleLoading(dispatch, async () => {
         try {
             const response = await groupPostAPI.findByGroupId(groupId, page, size, postCategory);
-            if (Array.isArray(response.data)) {
-                dispatch(saveGroupPosts(response.data));
-            }
+            dispatch(saveGroupPosts(response.data.content));
+            console.log(response.data)
         } catch (error: any) {
             handleApiError(error, dispatch, "게시물 목록 조회 중 오류 발생했습니다.");
             throw new Error('게시물 목록 조회 중 오류 발생');

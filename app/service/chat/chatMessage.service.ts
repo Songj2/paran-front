@@ -1,10 +1,9 @@
-import requests from "@/app/api/requests";
 import { ChatMessageModel } from "@/app/model/chat/chat.model";
 import { AppDispatch } from "@/lib/store";
 import { saveError, saveLoading } from "@/lib/features/chat/chat.slice";
 import chatMessageAPI from "@/app/api/generate/chatMessage.api";
-import { EventSourcePolyfill } from "event-source-polyfill";
 import { getAccessToken } from "@/app/api/authUtils";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 const findList = async ({ roomId, nickname, onMessage }: {
     roomId: string,
@@ -19,7 +18,7 @@ const findList = async ({ roomId, nickname, onMessage }: {
             throw new Error('No access token available');
         }
         eventSource = new EventSourcePolyfill(
-            `http://localhost:8000/message/${roomId}?nickname=${nickname}`,
+            process.env.NEXT_PUBLIC_BACK_URL + `/api/chats/messages/${roomId}?nickname=${nickname}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

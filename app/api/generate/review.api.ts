@@ -1,6 +1,6 @@
 import { ReviewModel, ReviewUpdateModel } from "@/app/model/room/review.model";
-import requests from "../requests";
-import api from "../axios";
+import requests from "@/app/api/requests";
+import api from "@/app/api/axios";
 
 export const reviewAPI = {
     insert(reviewModel: ReviewModel) { return api.post<ReviewModel>(requests.fetchRooms + '/reviews', reviewModel); },

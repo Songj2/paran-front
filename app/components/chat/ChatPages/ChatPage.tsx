@@ -19,10 +19,6 @@ const ChatPage = ({messages, roomId}: ChatPageProps) => {
     const user = useSelector(getCurrentUser)
     const nickname = user?.nickname ?? ''
 
-    // const user = useSelector() 
-    //-> 이거만 넣으면 됨, 챗은 소모임의 부속이라 그 안에 있을 것이라 사료됨. 
-    // 잘 돌아가는지 내일 확인하기 
-
     const sendMessage = useCallback(() => {
         chatMessageService.insert({nickname, roomId, message, dispatch})
             .then((isSuccess) => {

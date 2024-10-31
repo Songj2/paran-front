@@ -70,7 +70,7 @@ export default function TabButton({ initialTab }: TabButtonProps): JSX.Element {
           {tabButtons}
         </ul>
       </div>
-      <ul className="grid h-full w-full grid-cols-3 gap-6 mt-3 mb-8 md:grid-cols-3">
+      <ul>
         {renderActiveContent}
       </ul>
     </>

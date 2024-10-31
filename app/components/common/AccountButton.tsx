@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { accountService } from "@/app/service/room/account.service";
 import { AccountResultModel, AmountModel } from "@/app/model/room/account.model";
 import { useSelector } from "react-redux";
-import { getCurrentBooking } from "@/lib/features/room/bookings.slice";
+import { getCurrentBooking } from "@/lib/features/room/booking.slice";
 import { getCurrentUser } from "@/lib/features/users/user.slice";
 import { useAppDispatch } from "@/lib/store";
 import { saveLoading } from "@/lib/features/room/account.slice";
@@ -102,7 +102,7 @@ export default function AccountButton(): JSX.Element {
 
     return (
         <div>
-            <button className="rounded-lg bg-green-100 p-2 text-sm text-gray-900" onClick={requestPayment}>결제하기</button>
+            <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600" onClick={requestPayment}>결제하기</button>
         </div>
     );
 }

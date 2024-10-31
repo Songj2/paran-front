@@ -15,7 +15,7 @@ const instance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACK_URL,
   timeout: 1000,
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 // 요청 인터셉터
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
   },
   async (error: AxiosError | CustomAxiosError) => {
     const customError = error as CustomAxiosError;
-    
+
     if (customError.response?.status === 401 && customError.config && !customError.config._retry) {
       customError.config._retry = true;
       try {

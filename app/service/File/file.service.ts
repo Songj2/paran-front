@@ -4,7 +4,7 @@ import { addFile, removeFile, saveFiles, upLoading } from '@/lib/features/file/f
 import { AppDispatch } from '@/lib/store';
 
 // 파일 리스트 조회
-const selectFileList = async (refIds: number[], type: string, dispatch: AppDispatch): Promise<void> => {
+const selectFileList = async (refIds: number[], type: FileType, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(upLoading(true))
         const response = await fileAPI.findAll(refIds, type);
@@ -16,10 +16,10 @@ const selectFileList = async (refIds: number[], type: string, dispatch: AppDispa
 };
 
 // 파일 올리기
-const uploadFile = async (file: any[], type: string, refId: number, dispatch: AppDispatch): Promise<void> => {
+const uploadFile = async (file: any, type: FileType, refId: number, dispatch: AppDispatch): Promise<void> => {
     try {
         dispatch(upLoading(true))
-        const response = await fileAPI.modify(file, type, refId)
+        const response = await fileAPI.insert(file, type, refId)
         dispatch(addFile(response.data))
     } catch (error) {
         console.error('Error load file:', error);
@@ -39,6 +39,17 @@ const deleteFile = async (fileDeleteModel: FileDeleteModel, type: FileType, disp
     }
 };
 
+const findByRefId = async (refId: number, type: FileType): Promise<Blob> => {
+    try {
+        const response = await fileAPI.findByRefId(refId, type)
+        console.log(response)
+        return response.data;
+    } catch (error) {
+        console.error('Error load file:', error);
+        throw new Error('이미지 불러오기 중 오류 발생');
+    }
+}
+
 export const fileService = {
-    selectFileList, uploadFile, deleteFile
+    selectFileList, uploadFile, deleteFile,findByRefId
 }

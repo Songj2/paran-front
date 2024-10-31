@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@/lib/store';
-import { BookResponseModel, initialBookState, LikeBookModel } from '@/app/model/group/book.model';
+import { BookResponseModel, initialBookState} from '@/app/model/group/book.model';
 
 export const bookSlice = createSlice({
   name: 'book',
@@ -9,10 +9,10 @@ export const bookSlice = createSlice({
     saveBooks: (state, action: PayloadAction<BookResponseModel[]>) => {
       state.books = action.payload;
     },
-    saveLikedBooks: (state, action: PayloadAction<LikeBookModel[]>) => {
+    saveLikedBooks: (state, action: PayloadAction<BookResponseModel[]>) => {
       state.likedBooks = action.payload;
     },
-    addLikedBook: (state, action: PayloadAction<LikeBookModel>) => {
+    addLikedBook: (state, action: PayloadAction<BookResponseModel>) => {
       state.likedBooks.push(action.payload);
     },
     deleteLikedBook: (state, action: PayloadAction<number>) => {

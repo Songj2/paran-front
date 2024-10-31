@@ -3,7 +3,6 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import CategorySelect from "@/app/components/common/CategorySelect";
 import Alert from "@/app/components/common/Alert";
 
 interface UpdateFormData {
@@ -87,7 +86,6 @@ export default function Update() {
             required
           ></textarea>
         </div>
-        <CategorySelect onChange={handleCategoryChange} />
         <button type="submit" className="mx-2 rounded-lg bg-green-400 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-500">
           수정하기
         </button>

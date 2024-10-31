@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { findUserDetail, modifyPassword } from '@/app/service/user/user.service';
+import { userService} from '@/app/service/user/user.service';
 import { UserModel } from '@/app/model/user/user.model';
 import { AppDispatch } from "@/lib/store"; 
 
@@ -8,9 +8,9 @@ export const useUser = (nickname: string) => {
     const queryClient = useQueryClient();
     const dispatch: AppDispatch = useDispatch();
 
-    const { data: user, isLoading, error } = useQuery<UserModel, Error>(
+    const { data: user, isLoading, error} = useQuery<UserModel, Error>(
         ['user', nickname],
-        () => findUserDetail(nickname, dispatch),
+        () => userService.findUserDetail(nickname, dispatch),
         {
             staleTime: 5 * 60 * 1000,
             onError: (error: Error) => {
@@ -20,7 +20,7 @@ export const useUser = (nickname: string) => {
     );
 
     const updateUserPassword = useMutation(
-        (newPassword: string) => modifyPassword(nickname, newPassword, dispatch),
+        (newPassword: string) => userService.modifyPassword(nickname, newPassword, dispatch),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(['user', nickname]);

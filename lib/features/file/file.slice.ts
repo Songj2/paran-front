@@ -1,5 +1,5 @@
 // fileSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialFileState, FileModel, FileDeleteModel, FileType } from '../../../app/model/file/file.model';
 import { RootState } from '../../store';  // RootState는 store에서 정의된 타입이어야 함
 
@@ -103,15 +103,18 @@ const fileSlice = createSlice({
         },
     },
 });
-
+const selectFileState = (state: RootState) => state.file;
 // Selectors
-export const getFiles = (state: RootState) => ({
-    userFiles: state.file.userFiles,
-    roomFiles: state.file.roomFiles,
-    aboardFiles: state.file.aboardFiles,
-    groupPostFiles: state.file.groupPostFiles,
-    bookFiles: state.file.bookFiles,
-});
+export const getFiles = createSelector(
+    [selectFileState],
+    (fileState) => ({
+      userFiles: fileState.userFiles,
+      roomFiles: fileState.roomFiles,
+      aboardFiles: fileState.aboardFiles,
+      groupPostFiles: fileState.groupPostFiles,
+      bookFiles: fileState.bookFiles,
+    })
+  );
 export const getCurrentFile = (state: RootState) => state.file.currentFile;
 export const getFileToDelete = (state: RootState) => state.file.fileToDelete;
 export const getLoading = (state: RootState) => state.file.isLoading;

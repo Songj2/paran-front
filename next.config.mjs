@@ -14,8 +14,8 @@ const nextConfig = {
         hostname: "picsum.photos",
       },
       {
-        protocol: "http",
-        hostname: "localhost",
+        protocol: "https",
+        hostname: "https://api.paranmanzang.com",
       },
     ],
     // domains: ['localhost'],
@@ -24,7 +24,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:8000/:path*',
+        destination: 'https://api.paranmanzang.com/:path*',
       },
     ];
   },

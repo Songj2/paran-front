@@ -1,8 +1,7 @@
 import { LikeBookModel } from '@/app/model/group/book.model';
-import groupsAPI from "@/app/api/generate/group.api";
 import { AppDispatch } from "@/lib/store";
 import { addLikedBook, deleteLikedBook, saveError, saveLikedBooks, saveLoading } from "@/lib/features/group/book.slice";
-import likeBookAPI from "@/app/api/generate/likeBook.api";
+import { likeBookAPI } from '@/app/api/generate/likeBook.api';
 
 // 공통 에러 처리 함수
 const handleApiError = (error: any, dispatch: AppDispatch, message: string) => {
@@ -25,9 +24,10 @@ const handleLoading = async (dispatch: AppDispatch, callback: () => Promise<void
 // 좋아요 추가
 const insert = async (likeBookModel: LikeBookModel, dispatch: AppDispatch): Promise<void> => {
     await handleLoading(dispatch, async () => {
+        console.log(likeBookModel)
         try {
             const response = await likeBookAPI.insert(likeBookModel);
-            if ('id' in response.data && 'nickname' in response.data) {
+            if ('title' in response.data) {
                 dispatch(addLikedBook(response.data));
             }
         } catch (error: any) {
@@ -41,8 +41,8 @@ const drop = async (likeBookModel: LikeBookModel, dispatch: AppDispatch): Promis
     await handleLoading(dispatch, async () => {
         try {
             const response = await likeBookAPI.drop(likeBookModel);
-            if (likeBookModel.id !== undefined) {
-                dispatch(deleteLikedBook(likeBookModel.id));
+            if (likeBookModel.bookId !== undefined) {
+                dispatch(deleteLikedBook(likeBookModel.bookId));
             }
         } catch (error: any) {
             handleApiError(error, dispatch, "좋아요 취소 중 오류 발생했습니다.");
@@ -55,7 +55,10 @@ const findByNickname = async (nickname: string, dispatch: AppDispatch): Promise<
     await handleLoading(dispatch, async () => {
         try {
             const response = await likeBookAPI.findByNickname(nickname);
-            dispatch(saveLikedBooks(response.data));
+            console.log(response.data)
+            if(response.data !== null){
+                dispatch(saveLikedBooks(response.data));
+            }
         } catch (error: any) {
             handleApiError(error, dispatch, "내가 좋아하는 책 찾는 중 오류 발생했습니다.");
         }

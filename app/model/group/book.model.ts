@@ -1,6 +1,6 @@
 export interface BookState {
     books: BookResponseModel[];
-    likedBooks: LikeBookModel[];
+    likedBooks: BookResponseModel[];
     currentBook: BookResponseModel | null;
     isLoading: boolean;
     error: string | null;
@@ -28,11 +28,7 @@ export interface BookResponseModel {
 }
 
 export interface LikeBookModel {
-    id?: number;
+    id?: number
     nickname: string;
-    bookId: number;
-    title?: string;
-    author?: string;
-    categoryName?: string;
-    likeBookCount?: number;
+    bookId?: number;
 }

@@ -1,49 +1,72 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect, ReactEventHandler, useRef } from 'react';
 import Image from "next/image";
-import Naver from "@/app/assets/btnG.png"
 import { useRouter } from "next/navigation";
-import { login, oauth } from "@/app/service/user/login.service";
-import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/lib/store';
-import { saveCurrentUser } from '@/lib/features/users/user.slice';
+import { loginService } from '@/app/service/user/login.service';
+import { useSelector } from 'react-redux';
+import { getCurrentUser } from '@/lib/features/users/user.slice';
 
 export default function Login() {
     const router = useRouter();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const passwordRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch()
+    const role = useSelector(getCurrentUser)?.role
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('')
         try {
-            const user = login(username, password);
-            console.log('로그인 성공:', user);
-            dispatch(saveCurrentUser(user))
-            router.push('/')
-        } catch (error) {
-            console.error('로그인 실패:', error);
+            await loginService.login(username, password, dispatch)
+        } catch (err: any) {
+            console.error('Login error:', err);
+            setError('비밀번호가 다릅니다 다시 입력해주세요');
+        } finally {
+            setLoading(false);
         }
     };
+    // login 로직 끝난 후로 추가하기
+    useEffect(() => {
+        if (!loading && role) {
+            console.log("user 의 role 을 사용해볼게요", role)
+            switch (role) {
+                case "ROLE_ADMIN":
+                    router.push('/admin')
+                    break
+                case "ROLE_SELLER":
+                    router.push('/seller')
+                    break
+                default:
+                    router.push('/')
+            }
+        }
+    }, [role, router]);
+
 
     const moveToOath = () => {
-        const oauthUrl = process.env.NEXT_PUBLIC_OAUTH_URL;
         try {
-            if (oauthUrl) {
-                const result = oauth(oauthUrl);
-                console.log(result);
-            } else {
-                router.push('/')
-            }
+            const result = loginService.oauth();
+            console.log("result확인용", result);
+            console.log("page부분",window.location.search)
+            console.log("page부분끝",window.location.search)
         } catch (error) {
             console.error('로그인 실패:', error)
+        }finally{
+            router.push("/users/oauth")
         }
+        // const oauth = loginService.handleOAuthCallback(dispatch)
+        // console.log("확인용 : ", oauth)
 
     };
 
+
     return (
-        <div className="mx-auto my-6 max-w-lg rounded-lg border p-6 shadow items-center">
+        <div className="mx-auto my-6 max-w-lg items-center rounded-lg border p-6 shadow">
             <form onSubmit={onSubmit}>
                 <div className="mb-5">
                     <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-900">
@@ -67,12 +90,14 @@ export default function Login() {
                         type="password"
                         id="password"
                         value={password}
+                        ref={passwordRef}
                         onChange={(e) => setPassword(e.target.value)}
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                         placeholder="비밀번호"
                         required
                     />
                 </div>
+                {error && <div style={{ color: 'red' }}>{error}</div>}
                 <button
                     type="submit"
                     className="my-2 w-full rounded-lg border-2 border-green-400 bg-green-400 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
@@ -96,9 +121,9 @@ export default function Login() {
                     onClick={() => moveToOath()}
                 >
                     <Image
-                        src={Naver}
+                        src="/assets/btnG.png"
                         alt="naver"
-                        width={40}
+                        width={40} height={40}
                     />
                     <span className="mx-5">네이버로 로그인</span>
                 </button>

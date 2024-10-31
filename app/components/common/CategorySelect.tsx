@@ -1,8 +1,9 @@
 interface CategorySelectProps {
   onChange: (category: string) => void;
+  value: string
 }
 
-export default function CategorySelect({ onChange }: CategorySelectProps) {
+export default function CategorySelect({ onChange, value }: CategorySelectProps) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
   };
@@ -10,15 +11,15 @@ export default function CategorySelect({ onChange }: CategorySelectProps) {
   return (
     <div className="my-2">
       <label
-        htmlFor="categories"
+        htmlFor="category"
         className="mb-2 block text-sm font-medium text-gray-900"
       >
         카테고리
       </label>
       <select
-        id="categories"
+        id="category"
         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-400 focus:ring-green-400"
-        onChange={handleChange}
+        onChange={handleChange} value={value}
       >
         <option value="사회과학">사회과학</option>
         <option value="기술과학">기술과학</option>

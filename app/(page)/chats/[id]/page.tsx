@@ -10,6 +10,7 @@ import { chatRoomService } from "@/app/service/chat/chatRoom.service";
 import { chatUserService } from "@/app/service/chat/chatUser.service";
 import { chatMessageService } from "@/app/service/chat/chatMessage.service";
 import { useAppDispatch } from "@/lib/store";
+import { getNickname } from "@/lib/features/users/user.slice";
 
 const ChatPage = dynamic(() => import("@/app/components/chat/ChatPages/ChatPage"), { ssr: false });
 const MyChatList = dynamic(() => import("@/app/components/chat/MyChatList"), { ssr: false });
@@ -19,18 +20,22 @@ const MyProfile = dynamic(() => import("@/app/components/chat/MyProfile"), { ssr
 export default function ChatRoom() {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const chatRoom = useSelector(getCurrentChatRoom)
     const loading = useSelector(getIsLoading);
     const error = useSelector(getError);
 
-    const nickname = "J"; // TODO: 실제 사용자 닉네임으로 대체
+    const nickname = useSelector(getNickname) as string;
+    const chatRoom = useSelector(getCurrentChatRoom)
     const roomId = chatRoom?.roomId ?? '';
+
     const [messages, setMessages] = useState<ChatMessageModel[]>([]);
     const [chatRooms, setChatRooms] = useState<ChatRoomModel[]>([]);
     const [chatUsers, setChatUsers] = useState<ChatUserModel[]>([]);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
     const unsubscribeRef = useRef<(() => void) | null>(null);
+
+    const listRef = useRef<HTMLUListElement | null>(null);
+
 
     const togglePopUp = useCallback(() => {
         setIsPopUpOpen((prev) => !prev);
@@ -61,9 +66,10 @@ export default function ChatRoom() {
                 }
             })
             .finally(() => {
-                router.push("/chats/list");
+                router.push("/List");
             });
     }, [chatRoom, dispatch, nickname, roomId, router]);
+
 
     useEffect(() => {
 
@@ -109,6 +115,27 @@ export default function ChatRoom() {
         };
     }, [chatRoom, dispatch, nickname]);
 
+    const handleScroll = useCallback(() => {
+        if (listRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+            if (scrollTop + clientHeight >= scrollHeight) {
+                console.log("Reached the bottom of the people list.");
+                // 필요한 경우 더 많은 데이터를 불러오는 로직 추가
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.addEventListener("scroll", handleScroll);
+        }
+        return () => {
+            if (listRef.current) {
+                listRef.current.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, [handleScroll]);
+
     const memoizedChatPage = useMemo(() => {
         console.log("Rendering ChatPage with messages and roomId:", messages, roomId);
         return <ChatPage messages={messages} roomId={roomId} />;
@@ -121,10 +148,10 @@ export default function ChatRoom() {
 
     const memoizedPeopleList = useMemo(() => {
         console.log("Rendering PeopleList with chatUsers:", chatUsers);
-        return chatUsers.map((user) => (
-            <PeopleList key={user.nickname} chatUser={user} />
+        return chatUsers.map((user, index) => (
+            user.nickname !== nickname && <PeopleList key={index} chatUser={user} />
         ));
-    }, [chatUsers]);
+    }, [chatUsers, nickname]);
 
     if (loading) {
         return <div>로딩 중...</div>;
@@ -163,15 +190,22 @@ export default function ChatRoom() {
                         X
                     </button>
                 </div>
-                <div className="flex h-dvh justify-center rounded-lg bg-gray-100">
-                    <section className="relative w-1/5 bg-green-700">
+                <div className="flex h-screen justify-center rounded-lg bg-gray-100">
+                    <section className="relative flex flex-col w-1/5 bg-green-700">
                         {memoizedMyChatList}
-                        <ul className="w-full">
-                            {memoizedPeopleList}
-                        </ul>
-                        <MyProfile />
+                        <div className="flex-1 overflow-hidden">
+                            <ul
+                                className="w-full h-full overflow-y-auto"
+                                ref={listRef}
+                                style={{ maxHeight: "100%" }} // 최대 높이 설정
+                            >
+                                {memoizedPeopleList}
+                            </ul>
+                        </div>
+                        <MyProfile roomId={roomId} />
                     </section>
-                    <article className="flex w-4/5 flex-col bg-blue-200 ">
+
+                    <article className="flex w-4/5 flex-col bg-blue-200">
                         <aside className="w-full">
                             {memoizedChatPage}
                         </aside>

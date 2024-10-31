@@ -1,9 +1,12 @@
+import { getCurrentUser } from "@/lib/features/users/user.slice";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useSelector } from "react-redux";
 
 export default function BellService() {
   const route = useRouter()
   const [isPage, setIsPage] = useState();
+  const user = useSelector(getCurrentUser)
   const onMovePage = () => {
     // setIsPage(`{여기에 이동할 페이지 올리기}`)
     route.push('/admin/`${}`')

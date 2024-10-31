@@ -24,6 +24,7 @@
 .myMessageContainer {
   display: flex;
   justify-content: flex-end;
+  align-items: end;
   margin-bottom: 0.938rem;
 }
 .myMessage {

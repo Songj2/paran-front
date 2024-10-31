@@ -1,16 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getRooms, saveCurrentRoom, saveLoading } from "@/lib/features/room/room.slice";
-import { RoomModel } from "@/app/model/room/room.model";
+import { getRooms, saveCurrentRoom } from "@/lib/features/room/room.slice";
 import { useAppDispatch } from "@/lib/store";
 import { useSelector } from "react-redux";
-import { FileType } from "@/app/model/file/file.model";
 import { roomService } from "@/app/service/room/room.service";
-import { getFiles, saveCurrentFile, upLoading } from "@/lib/features/file/file.slice";
-import ErrorMessage from "../status/ErrorMessage";
+import { getFiles, saveCurrentFile } from "@/lib/features/file/file.slice";
 import Pagination from "./pagination/Pagination";
 import RoomCard from "./RoomCard";
-import { fileService } from "@/app/service/File/file.service";
+import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/lib/features/users/user.slice";
+import { getAddresses, saveCurrentAddress } from "@/lib/features/room/address.slice";
 
 interface RoomRowProps {
   active: boolean;
@@ -18,27 +17,21 @@ interface RoomRowProps {
 }
 
 const RoomRow = ({ active, onSelect }: RoomRowProps) => {
-  const rooms = useSelector(getRooms);
-  const files = useSelector(getFiles);
-  const dispatch = useAppDispatch();
+  const rooms = useSelector(getRooms)
+  const files = useSelector(getFiles)
+  const addresses = useSelector(getAddresses)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const user = useSelector(getCurrentUser)
 
-  const [page, setPage] = useState(1);
+  // const [items, setItems] = useState<RoomModel[]>([]);
+  const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(9);
-  const totalItems = 10; // 실제 데이터의 총 개수로 업데이트
+  const totalItems = 10;
 
   useEffect(() => {
-    dispatch(saveLoading(true));
     roomService.findByEnabled(page, pageSize, dispatch);
-    loadRoomFiles(rooms);
-    dispatch(saveLoading(false));
-  }, [page, pageSize]);
-
-  const loadRoomFiles = (rooms: RoomModel[]) => {
-    const roomIds = rooms.map((room) => room.id);
-    dispatch(upLoading(true));
-    fileService.selectFileList(roomIds, FileType.ROOM, dispatch);
-    dispatch(upLoading(false));
-  };
+  }, [page, pageSize, dispatch])
 
   const getRoomImage = (roomId: number | undefined): string => {
     if (roomId !== undefined) {
@@ -56,31 +49,32 @@ const RoomRow = ({ active, onSelect }: RoomRowProps) => {
       if (currentRoom) {
         dispatch(saveCurrentRoom(currentRoom));
         dispatch(saveCurrentFile(files.roomFiles.find(({ refId }) => refId === currentId) ?? null));
+        dispatch(saveCurrentAddress(addresses.find(({ roomId }) => roomId === currentId) ?? null))
+        router.push(`/rooms/${currentId}`);
       }
     }
   };
 
   return (
     <>
-      {rooms.length > 0 ? (
-        rooms.map((room) => (
+      <div className="w-[92%] mb-4 ml-4 grid grid-cols-4 gap-8 md:grid-cols-3">
+        {rooms.map((room, index) => (
           <RoomCard
-            key={room.id}
+            key={index}
             room={room}
             isActive={active}
             getRoomImage={getRoomImage}
+            onSelect={onSelect}
             onClickToDetail={onClickToDetail}
           />
-        ))
-      ) : (
-        <div><ErrorMessage message={'등록된 공간이 없습니다.'}/></div>
-      )}
-      <Pagination 
-        currentPage={page} 
-        pageSize={pageSize} 
-        totalItems={totalItems} 
-        onPageChange={setPage} 
-        onPageSizeChange={setPageSize} 
+        ))}
+      </div>
+      <Pagination
+        currentPage={page}
+        pageSize={pageSize}
+        totalItems={totalItems}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
       />
     </>
   );

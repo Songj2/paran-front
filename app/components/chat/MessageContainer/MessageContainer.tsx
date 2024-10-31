@@ -12,12 +12,12 @@ const MessageContainer = ({ messages, currentUserNickname }: MessageContainerPro
 
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" }); 
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
   return (
-  <div className={styles.messageContainer}>
+    <div className={styles.messageContainer}>
       {messages.map((message) => {
         const isCurrentUser = message.nickname === currentUserNickname;
 
@@ -44,18 +44,18 @@ const MessageContainer = ({ messages, currentUserNickname }: MessageContainerPro
 
         // 상대방이 보낸 메시지
         return (
-          <>
+          <div key={message.id}>
             <p>{message.nickname}</p>
-            <div key={message.id} className={styles.yourMessageContainer}>
+            <div className={styles.yourMessageContainer}>
               <div className={styles.yourMessage}>
                 <span>{message.message}</span>
               </div>
               <span className={styles.messageTime}>{message.time}</span>
             </div>
-          </>
+          </div>
         );
       })}
-      
+
       <div ref={messageEndRef} />
     </div>
   );

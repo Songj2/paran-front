@@ -1,20 +1,13 @@
-import api from '../axios';
-import requests from "@/app/api/requests";
 import { LikeRoomModel } from "@/app/model/user/users.model";
-import { ExceptionResponseModel } from "@/app/model/error.model";
+import requests from "@/app/api/requests";
+import api from "@/app/api/axios";
 
 export const likeRoomAPI = {
     insert: (likeRoomModel: LikeRoomModel) => {
-        return api.post<LikeRoomModel | ExceptionResponseModel>(requests.fetchUsers + `/likeRoom/add`, likeRoomModel);
+        return api.post<LikeRoomModel>(requests.fetchRooms + `/likerooms`, likeRoomModel);
     },
     drop: (likeRoomModel: LikeRoomModel) => {
-        return api.delete<boolean | ExceptionResponseModel>(requests.fetchUsers + '/likeRoom/remove', {
-            data: likeRoomModel
-        });
+        return api.delete<boolean>(requests.fetchRooms + '/likerooms', likeRoomModel);
     },
-    findLikeRoomList: (nickname: string) => {
-        return api.get<LikeRoomModel[]>(requests.fetchUsers + `/likeRoom/list/${nickname}`);
-    }
+   
 }
-
-export default likeRoomAPI;

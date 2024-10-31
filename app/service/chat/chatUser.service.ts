@@ -20,11 +20,11 @@ const handleLoading = async (dispatch: AppDispatch, callback: () => Promise<any>
 };
 
 // 유저 채팅방 초대
-const insert = async ({ roomId, nickname, dispatch }: {
+const insert = async (
     roomId: string,
     nickname: string,
     dispatch: AppDispatch
-}): Promise<any> => {
+): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatUserAPI.insert(roomId, nickname);
@@ -50,11 +50,7 @@ const findList = async ({ roomId, dispatch }: { roomId: string, dispatch: AppDis
 };
 
 // 유저 채팅방 나가기
-const drop = async ({ roomId, nickname, dispatch }: {
-    roomId: string,
-    nickname: string,
-    dispatch: AppDispatch
-}): Promise<any> => {
+const drop = async ( roomId: string, nickname: string, dispatch: AppDispatch): Promise<any> => {
     return await handleLoading(dispatch, async () => {
         try {
             const response = await chatUserAPI.drop(roomId, nickname);

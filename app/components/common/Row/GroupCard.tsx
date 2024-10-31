@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { saveCurrentGroup } from "@/lib/features/group/group.slice";
 
 interface GroupCardProps {
-  group: any; // 타입을 더 구체적으로 정의할 수 있습니다.
+  group: any; 
   active: boolean;
   onSelect: () => void;
 }
@@ -21,7 +21,7 @@ const GroupCard = ({ group, active, onSelect }: GroupCardProps) => {
   return (
     <>
       <li
-        className={`max-w-sm my-6 list-none rounded-lg border border-gray-200 bg-white shadow ${active ? 'ring-2 ring-green-500' : ''
+        className={`max-w-sm my-2 list-none rounded-lg border border-gray-200 bg-white shadow ${active ? 'ring-2 ring-green-500' : ''
           }`}
         onClick={onSelect}
       >

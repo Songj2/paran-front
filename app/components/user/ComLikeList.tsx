@@ -1,89 +1,198 @@
-"use client"
-import Link from "next/link";
+"use client";
 import AccountButton from "@/app/components/common/AccountButton";
 import { useState } from "react";
 import Alert from "../common/Alert";
-import { useAppDispatch } from "@/lib/store";
 import { useSelector } from "react-redux";
-import { getLikedPosts, getLikedRooms } from "@/lib/features/users/users.slice";
-import { getLikedBooks } from "@/lib/features/group/book.slice";
+
+import { getLikedBooks, saveCurrentBook } from "@/lib/features/group/book.slice";
+import { getLikedPosts, saveCurrentGroupPost } from "@/lib/features/group/group.slice";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/lib/store";
+import { getLikedRooms, saveCurrentRoom } from "@/lib/features/room/room.slice";
+import { likePostService } from "@/app/service/group/likePost.service";
+import { getNickname } from "@/lib/features/users/user.slice";
+import { LikePostModel } from "@/app/model/group/group.model";
+import { LikeBookModel } from "@/app/model/group/book.model";
+import { likeBookService } from "@/app/service/group/likeBook.service";
+import { LikeRoomModel } from "@/app/model/user/users.model";
+import { likeRoomService } from "@/app/service/users/likeRoom.service";
+import { getAddresses, saveCurrentAddress } from "@/lib/features/room/address.slice";
+
 
 interface ComLikeListProps {
-  type: "그룹" | "도서" | "장소";
+  type: "게시글" | "도서" | "장소";
 }
 
 interface LikedItem {
   id: string | number;
   title: string;
-  description: string;
 }
 
-const ComLikeList = ({ type } : ComLikeListProps) => {
+const ComLikeList = ({ type }: ComLikeListProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
   const likedPosts = useSelector(getLikedPosts);
   const likedRooms = useSelector(getLikedRooms);
   const likedBooks = useSelector(getLikedBooks);
+  const nickname = useSelector(getNickname)
+  const addresses = useSelector(getAddresses)
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const modalOpen = (): void => {
-    setIsModalOpen(true); 
-    <Alert message={'예약요청이 완료되었습니다.'} isOpen={isModalOpen} onClose={() => setIsModalOpen(false) }/>
-    console.log('AccountLike: ' + '예약요청이 완료되었습니다.');
-  }
+    setIsModalOpen(true);
+  };
 
+  const mapToLikedItems = (items: any[], type: string): LikedItem[] => {
+    return items.map((item) => {
+      switch (type) {
+        case "게시글":
+          return {
+            id: item.id,
+            title: item.title,
+          };
+        case "도서":
+          return {
+            id: item.id,
+            title: item.title,
+          };
+        case "장소":
+          return {
+            id: item.id,
+            title: item.name,
+          };
+        default:
+          return {
+            id: item.id,
+            title: item.title || "제목 없음",
+          };
+      }
+    });
+  };
+
+  // type에 맞는 아이템들을 렌더링
   const renderItems = (): JSX.Element[] => {
-    let items: LikedItem[];
-    switch(type) {
-      case "그룹":
-        items = likedPosts;
+    let items: LikedItem[] = [];
+    switch (type) {
+      case "게시글":
+        items = mapToLikedItems(likedPosts, "게시글");
         break;
       case "도서":
-        items = likedBooks;
+        items = mapToLikedItems(likedBooks, "도서");
         break;
       case "장소":
-        items = likedRooms;
+        items = mapToLikedItems(likedRooms, "장소");
         break;
       default:
         items = [];
     }
 
+    const onClickToDetail = (id: number) => {
+      switch (type) {
+        case "게시글":
+          const selectedPost = likedPosts.find((likePost) => likePost.id === id);
+          if (selectedPost) {
+            dispatch(saveCurrentGroupPost(selectedPost));
+            router.push(`/groups/board/detail/${id}`);
+          }
+          break;
+        case "도서":
+          const selectedBook = likedBooks.find((likeBook) => likeBook.id === id);
+          if (selectedBook) {
+            dispatch(saveCurrentBook(selectedBook));
+            router.push(`/books/${id}`);
+          }
+          break;
+        case "장소":
+          const selectedRoom = likedRooms.find((likeRoom) => likeRoom.id === id);
+          if (selectedRoom) {
+            dispatch(saveCurrentRoom(selectedRoom));
+            dispatch(saveCurrentAddress(addresses.find(({ roomId }) => roomId === id) ?? null))
+            router.push(`/rooms/${id}`);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    const onClickDisLike = (id: number) => {
+      if (!nickname) return;
+      switch (type) {
+        case "게시글":
+          const likePostModel: LikePostModel = {
+            postId: id,
+            nickname: nickname
+          };
+          likePostService.drop(likePostModel, dispatch)
+          break;
+        case "도서":
+          const likeBookModel: LikeBookModel = {
+            bookId: id,
+            nickname: nickname
+          };
+          likeBookService.drop(likeBookModel, dispatch)
+          break;
+        case "장소":
+          const likeRoomModel: LikeRoomModel = {
+            roomId: id,
+            nickname: nickname
+          };
+          likeRoomService.drop(likeRoomModel, dispatch)
+          break;
+        default:
+          break;
+      }
+    }
+
     return items.map((item: LikedItem, index: number) => (
-      <li key={item.id || index} className="w-full relative">
-        <div className="flex justify-around my-2 rounded-lg border border-gray-200 bg-white p-6 shadow hover:bg-gray-100">
-          <div>
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+      <li key={item.id || index} className="relative w-full">
+        <div className="my-2 flex justify-around items-center rounded-lg border border-gray-200 bg-white p-6 shadow hover:bg-gray-100">
+          <div className="w-[42%]">
+            <h5
+              className="mb-2 text-lg font-bold text-gray-900"
+              onClick={() => onClickToDetail(Number(item.id))}
+            >
               {item.title}
             </h5>
-            <p className="font-normal text-gray-700">
-              {item.description}
-            </p>
           </div>
           <div className="btn_wrap flex items-center">
+            <button
+              type="button"
+              onClick={() => onClickDisLike(Number(item.id))}
+              className="rounded-lg bg-green-100 p-2 text-sm"
+            >
+              좋아요 취소
+            </button>
             {type === "장소" && (
-              <button type="button" onClick={modalOpen} className="text-sm p-2 mx-3 bg-green-100 rounded-lg">
-                요청보내기
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={modalOpen}
+                  className="mx-3 rounded-lg bg-green-100 p-2 text-sm"
+                >
+                  예약하기
+                </button>
+                <AccountButton />
+              </>
             )}
-            {type === "그룹" && (
-              <button type="button" onClick={modalOpen} className="text-sm p-2 mx-3 bg-green-100 rounded-lg">
-                참여요청
-              </button>
-            )}
-            <AccountButton />
           </div>
         </div>
       </li>
     ));
-  }
-  
-  return ( 
+  };
+
+  return (
     <div>
-      <h2 className="text-xl font-bold mb-4">{type} 좋아요 목록</h2>
-      <ul>
-        {renderItems()}
-      </ul>
+      {isModalOpen && (
+        <Alert
+          message={"예약요청이 완료되었습니다."}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
+      <ul>{renderItems()}</ul>
     </div>
   );
-}
+};
 
 export default ComLikeList;

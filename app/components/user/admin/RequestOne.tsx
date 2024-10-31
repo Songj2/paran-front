@@ -1,11 +1,8 @@
 export default function RequestOne() {
   return (
-    <ul>
-      {/* map 으로 돌리기  */}
-      <li>
-        <button type="button">
-        </button>
-      </li>
-    </ul>
+    <div>
+      {/* 요청사항보기 -- 프론트 */}
+      <button>요청사항보기</button>
+    </div>
   )
 }

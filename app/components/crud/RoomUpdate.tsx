@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Alert from "../common/Alert";
 
-
 export default function RoomUpdate() {
   const [formData, setFormData] = useState({
     place: '',

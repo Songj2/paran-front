@@ -12,7 +12,7 @@ export const accountAPI = {
 
     modify(model: AccountCancelModel) { return api.put<boolean>(requests.fetchRooms + '/accounts', model); },
 
-    findByBooking(bookingId: number, page: number, size: number) { return api.get<AccountModel>(requests.fetchRooms + `/accounts/${bookingId}`, { params: { page, size } }); },
+    findByBooking(bookingId: number) { return api.get<AccountModel>(requests.fetchRooms + `/accounts/${bookingId}`); },
 
     findByGroup(groupId: number, page: number, size: number) { return api.get<Page<AccountModel>>(requests.fetchRooms + `/accounts/group/${groupId}`, { params: { page, size } }); },
 

@@ -1,11 +1,11 @@
 import { ExceptionResponseModel } from "@/app/model/error.model";
 import requests from "@/app/api/requests";
 import api from "@/app/api/axios";
-import { BookResponseModel, LikeBookModel } from "@/app/model/group/book.model";
+import {BookResponseModel, LikeBookModel } from "@/app/model/group/book.model";
 
 export const likeBookAPI = {
     insert(likeBookModel: LikeBookModel) {
-        return api.post<LikeBookModel | ExceptionResponseModel>(requests.fetchGroups + `/like-book`, likeBookModel);
+        return api.post<BookResponseModel>(requests.fetchGroups + `/like-book`, likeBookModel);
     },
     drop(likeBookModel: LikeBookModel) {
         return api.delete<boolean | ExceptionResponseModel>(requests.fetchGroups + `/like-book`, {
@@ -13,8 +13,6 @@ export const likeBookAPI = {
         });
     },
     findByNickname(nickname: string) {
-        return api.get<LikeBookModel[]>(requests.fetchGroups + `/like-book/list/${nickname}`);
+        return api.get<BookResponseModel[]>(requests.fetchGroups + `/like-book/list/${nickname}`);
     }
 }
-
-export default likeBookAPI;

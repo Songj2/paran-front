@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Alert from "./Alert";
-import { useAppDispatch } from "@/lib/store";
 import { useSelector } from "react-redux";
 import { getCurrentUser } from "@/lib/features/users/user.slice";
 
@@ -88,9 +87,19 @@ export default function About() {
   const [alertMessage, setAlertMessage] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const user = useSelector(getCurrentUser);
+  const contentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
+  useEffect(() => {
+    openItems.forEach((id) => {
+      if (contentRefs.current[id]) {
+        const element = contentRefs.current[id];
+        if (element) {
+          element.style.maxHeight = `${element.scrollHeight}px`;
+        }
+      }
+    });
+  }, [openItems]);
 
   const handleDelete = () => {
     if (checkedItems.length === 0) {
@@ -98,7 +107,7 @@ export default function About() {
       setAlertMessage("삭제할 항목을 선택해주세요");
       return;
     }
-    
+
     const newItems = items.filter((item) => !checkedItems.includes(item.id));
     setItems(newItems);
     setCheckedItems([]);
@@ -106,7 +115,7 @@ export default function About() {
     setAlertMessage("선택한 항목이 삭제되었습니다.");
   };
 
-  const handleUpdate = ({item}: any) => {
+  const handleUpdate = () => {
     if (checkedItems.length === 0) {
       setIsAlertOpen(true);
       setAlertMessage("수정할 항목을 선택해주세요.");
@@ -120,144 +129,132 @@ export default function About() {
     }
 
     // 선택된 항목의 ID를 쿼리 파라미터로 전달
-    //router.push(`/aboard/update?id=${check edItems[0]}`);
-    router.push(`/aboard/update/${item.id}}`);
+    router.push(`/aboard/update/${checkedItems[0]}`);
   };
 
   const toggleItem = (id: string) => {
     setOpenItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const handleCheckboxChange = (id: string) => {
     setCheckedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   return (
     <>
-    <div className="px-[15%] py-[5%]">
-        {user?.role === 'admin' &&  (
-      <div className="ms-auto max-w-[20rem]">        
-        <Link
-          href="/aboard/add"
-          className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
-        >
-          등록
-        </Link>
-        <button
-          type="button"
-// /          href="/aboard/2/update"
-          onClick={handleUpdate}
-          className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
-        >
-          수정
-        </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
-        >
-          삭제
-        </button>
-        <button
-          type="button"
-          onClick={() => {router.back()}}
-          className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
-        >
-          뒤로가기
-        </button>
-      </div>
-      )}
+      <div className="px-[15%] py-[5%]">
+        {user?.role === 'ROLE_ADMIN' && (
+          <div className="ms-auto max-w-[20rem] mb-4">
+            <Link
+              href="/aboard/add"
+              className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
+            >
+              등록
+            </Link>
+            <button
+              type="button"
+              onClick={handleUpdate}
+              className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
+            >
+              수정
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
+            >
+              삭제
+            </button>
+            <button type="button"
+              onClick={() => { router.back() }}
+              className="mx-2 rounded-lg bg-green-400 px-4 py-3 text-center text-sm font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-green-300"
+            >뒤로가기</button>
+          </div>
+        )}
 
-      <blockquote className="mb-6 text-xl font-semibold italic text-gray-900">
-        <p>&ldquo;Paranmanzang 서비스를 이용해주셔서 감사합니다.&rdquo;</p>
-      </blockquote>
+        <blockquote className="mb-6 text-xl font-semibold italic text-gray-900">
+          <p>&ldquo;Paranmanzang 서비스를 이용해주셔서 감사합니다.&rdquo;</p>
+        </blockquote>
 
-      <div id="accordion-open" data-accordion="open">
-        {items.map((item) => (
-          <div key={item.id}>
-            <h2 id={item.id}>
-              <button
-                type="button"
-                className={`flex w-full items-center justify-between gap-3 border border-gray-200 p-5 font-medium text-gray-500 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 rtl:text-right ${
-                  openItems.includes(item.id)
-                    && ( "bg-gray-100 text-gray-900")
-                }`}
-                onClick={() => toggleItem(item.id)}
-                aria-expanded={openItems.includes(item.id)}
-                aria-controls={`${item.id}-body`}
-              >
-                <span className="flex items-center">
-                    {user?.role === 'admin' && (
-                    <div className="mx-4 flex items-center">
-                        <input
-                            id={`checkbox-${item.id}`}
-                            type="checkbox"
-                            checked={checkedItems.includes(item.id)}
-                            onChange={() => handleCheckboxChange(item.id)}
-                            className="size-4 rounded border-gray-300 bg-gray-100 text-green-400"
-                          />
-                    </div>
+        <div id="accordion-open" data-accordion="open">
+          {items.map((item) => (
+            <div key={item.id}>
+              <h2 id={item.id}>
+                <button
+                  type="button"
+                  className={`flex w-full items-center justify-between gap-3 border border-gray-200 p-5 font-medium text-gray-500 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 rtl:text-right ${openItems.includes(item.id) && "bg-gray-100 text-gray-900"
+                    }`}
+                  onClick={() => toggleItem(item.id)}
+                  aria-expanded={openItems.includes(item.id)}
+                  aria-controls={`${item.id}-body`}
+                >
+                  <span className="flex items-center">
+                    {user?.role === 'ROLE_ADMIN' && (
+                      <input
+                        id={`checkbox-${item.id}`}
+                        type="checkbox"
+                        checked={checkedItems.includes(item.id)}
+                        onChange={() => handleCheckboxChange(item.id)}
+                        className="mr-2 h-4 w-4 rounded border-gray-300 bg-gray-100 text-green-400"
+                      />
                     )}
-
+                    <svg
+                      className="me-2 size-5 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                    {item.title}
+                    <span className="ms-3 inline-flex items-center justify-center rounded-full bg-green-100 px-2 text-sm font-medium text-green-800">
+                      {item.category}
+                    </span>
+                  </span>
                   <svg
-                    className="me-2 size-5 shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                    className={`size-3 shrink-0 transition-transform ${openItems.includes(item.id) ? "rotate-180" : ""
+                      }`}
+                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
                   >
                     <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                      clipRule="evenodd"
-                    ></path>
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5 5 1 1 5"
+                    />
                   </svg>
-                  {item.title}
-                  <span className="ms-3 inline-flex items-center justify-center rounded-full bg-green-100 px-2 text-sm font-medium text-green-800">
-                    {item.category}
-                  </span>
-                </span>
-                <svg
-                  className={`size-3 shrink-0 transition-transform ${
-                    openItems.includes(item.id) ? "rotate-180" : ""
-                  }`}
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5 5 1 1 5"
-                  />
-                </svg>
-              </button>
-            </h2>
-            <div
-              id={`${item.id}`}
-              className={openItems.includes(item.id) ? "" : "hidden"}
-              aria-labelledby={item.id}
-            >
-              <div className="border border-b-0 border-gray-200 p-5">
-                {item.content}
+                </button>
+              </h2>
+              <div
+                id={`${item.id}`}
+                className={`accordion-content ${openItems.includes(item.id) ? "open" : ""}`}
+                aria-labelledby={item.id}
+              >
+                <div className="border border-b-0 border-gray-200 p-5">
+                  {item.content}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-    <Alert 
-    message={alertMessage}
-    isOpen={isAlertOpen}
-    onClose={() => setIsAlertOpen(false)}
-    />
+      <Alert
+        message={alertMessage}
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+      />
     </>
-    
   );
 }

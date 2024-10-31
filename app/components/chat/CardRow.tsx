@@ -6,7 +6,7 @@ import { saveCurrentChatRoom } from "@/lib/features/chat/chat.slice";
 import { useRouter } from "next/navigation";
 
 interface CardRowProps {
-    chatRoom: ChatRoomModel
+    chatRoom: ChatRoomModel;
 }
 
 export default function CardRow({

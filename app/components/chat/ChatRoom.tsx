@@ -1,6 +1,4 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import dynamic from 'next/dynamic';
 import ChatRoomLayout from "./ChatRoomLayout";
@@ -50,7 +48,7 @@ export default function ChatRoom() {
                         <PeopleList key={user.nickname} chatUser={user} />
                     ))}
                 </ul>
-                <MyProfile />
+                <MyProfile roomId={""} />
                 <ChatPage messages={messages} roomId={roomId} />
             </>
         </ChatRoomLayout>

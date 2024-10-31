@@ -1,26 +1,30 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userSlice from './features/users/user.slice'
 import fileSlice from './features/file/file.slice'
 import roomSlice from './features/room/room.slice'
 import addressSlice from './features/room/address.slice'
 import accountSlice from './features/room/account.slice'
 import reviewSlice from './features/room/review.slice'
-import groupSlice from './features/group/group.slice'
-import bookingsSlice from './features/room/bookings.slice'
+import bookingsSlice from './features/room/booking.slice'
+import { useDispatch } from "react-redux"
+import userSlice from './features/users/user.slice'
 import errorSlice from './features/error.slice'
-import bookSlice from './features/group/book.slice'
 import commentSlice from './features/comment/comment.slice'
 import chatSlice from './features/chat/chat.slice'
-import { useDispatch } from "react-redux"
-import usersSlice from './features/users/users.slice'
+import bookSlice from './features/group/book.slice'
 import dataSlice from './features/data.slice'
+import adminPostSlice from './features/users/adminPost.slice'
+import declarationPostSlice from './features/users/declarationPost.slice'
+import friendSlice from './features/users/friend.slice'
+import groupSlice from '@/lib/features/group/group.slice'
 
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       user: userSlice,
-      users: usersSlice,
+      adminPost: adminPostSlice,
+      declarationPost: declarationPostSlice,
+      friend: friendSlice,
       file: fileSlice,
       room: roomSlice,
       address: addressSlice,

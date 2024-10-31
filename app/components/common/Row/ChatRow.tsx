@@ -1,33 +1,37 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from "@/lib/store";
-import ChatCard from './ChatCard';
-import fetchChats from "@/app/api/requests";
-import requests from "@/app/api/requests";
-
+import { useAppDispatch } from "@/lib/store";
+import { getNickname } from "@/lib/features/users/user.slice";
+import { ChatRoomModel } from "@/app/model/chat/chat.model";
+import { chatRoomService } from "@/app/service/chat/chatRoom.service";
+import ChatCard from "./ChatCard";
 interface ChatRowProps {
   active: boolean;
   onSelect: () => void;
 }
 
-const ChatRow = ({ active, onSelect }:ChatRowProps) => {
-  const dispatch = useAppDispatch()
-  const { chats, loading, error } = useSelector((state: RootState) => state.chat)
+const ChatRow = ({ active, onSelect }: ChatRowProps) => {
+  const nickname = useSelector(getNickname) as string;
+  const dispatch = useAppDispatch();
+  const [chatRooms, setChatRooms] = useState<ChatRoomModel[] | null>(null)
 
   useEffect(() => {
-    dispatch(requests.fetchChats());
-  }, [dispatch]);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+    chatRoomService.findList({ nickname, dispatch })
+      .then(result => {
+        setChatRooms(result);
+      })
+  }, [nickname, dispatch]);
 
   return (
-    <div className="grid grid-cols-1 gap-4">
-      {chats.map((chat: { id: React.Key | null | undefined; }) => (
-        <ChatCard key={chat.id} chat={chat} active={active} onSelect={onSelect} />
+    <>
+    <div className="w-[92%] mb-4 ml-4 grid grid-cols-4 gap-8 md:grid-cols-3">
+      {chatRooms?.map((room,index) => (
+        <ChatCard key={index}
+          chatRoom={room} active={active} onSelect={onSelect} />
       ))}
     </div>
+    </>
   );
 };
 

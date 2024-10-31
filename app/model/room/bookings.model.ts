@@ -11,6 +11,8 @@ export interface BookingModel {
 // 상태 인터페이스 정의
 export interface BookingState {
   bookings: BookingModel[];
+  enabledBookings: BookingModel[];
+  notEnabledBookings: BookingModel[];
   currentBooking: BookingModel | null;
   isLoading: boolean;
   error: string | null;
@@ -19,6 +21,8 @@ export interface BookingState {
 // 초기 상태
 export const initialBookingState: BookingState = {
   bookings: [],
+  enabledBookings: [],
+  notEnabledBookings: [],
   currentBooking: null,
   isLoading: false,
   error: null

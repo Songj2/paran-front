@@ -3,25 +3,38 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { getAddresses } from '@/lib/features/room/address.slice';
+import { getAddresses, saveCurrentAddress } from '@/lib/features/room/address.slice';
 import { AddressModel } from '@/app/model/room/address.model';
+import { useAppDispatch } from '@/lib/store';
+import { getRooms, saveCurrentRoom } from '@/lib/features/room/room.slice';
 
 
 const NaverMap = () => {
     const addresses = useSelector(getAddresses)
+    const rooms = useSelector(getRooms)
+    const dispatch = useAppDispatch()
 
     let map: naver.maps.Map; // 'map' 변수를 useEffect 범위 바깥에 선언
     const router = useRouter();
-    const onCLickToMove = (id: number) => {
-        router.push(`/rooms/${id}`)
-    }
+
     useEffect(() => {
         const initMap = () => {
             if (typeof window !== 'undefined' && window.naver) {
+                let center = addresses[0] as AddressModel;
+
+                if (addresses.length === 0) {
+                    center = {
+                        id: 0,
+                        address: "a",
+                        detailAddress: "b",
+                        roomId: 0,
+                        latitude: 37.552987017, longitude: 126.972591728
+                    }
+                }
                 const mapOptions = {
-                    //center: new window.naver.maps.LatLng(addresses[0].latitude, addresses[0].longitude),
-                    center: new window.naver.maps.LatLng('38.00', '37.99'),
-                    zoom: 16,
+
+                    center: new window.naver.maps.LatLng(center.latitude, center.longitude),
+                    zoom: 12,
                 };
 
                 // 'map' 변수를 전역에서 접근 가능하도록 선언
@@ -31,22 +44,47 @@ const NaverMap = () => {
                 let markerList: naver.maps.Marker[] = [];
                 let infoWindows: naver.maps.InfoWindow[] = [];
 
+                const onCLickToMove = (id: number) => {
+                    dispatch(saveCurrentAddress(addresses.find(({ roomId }) => roomId === id) ?? null))
+                    router.push(`/rooms/${id}`);
+                };
+
                 addresses.forEach((address: AddressModel, index: number) => {
                     const marker = new window.naver.maps.Marker({
                         position: new window.naver.maps.LatLng(address.latitude, address.longitude),
                         map: map,
                     });
 
-                    const infoWindow = new window.naver.maps.InfoWindow({
-                        content: `<div style="width:250px;text-align:center;padding:10px;">
-                                  <b><Link href="/rooms/${address.id}">${address.detailAddress}</Link></b><br/>
-                                  ${address.address}
-                                  <buttom type="button" onClick={onCLickToMove(${address.id})}>이동하기</button>
-                                  </div>`,
-                    });
+                    if (address.id) {
+                        const infoWindow = new window.naver.maps.InfoWindow({
+                            content: `<div style="width:250px;text-align:center;padding:10px;">
+                                      <b>${address.detailAddress}</b><br/>
+                                      ${address.address}
+                                      <button type="button" id="move-button-${address.id}">이동하기</button>
+                                      </div>`,
+                        });
+
+                        infoWindows.push(infoWindow);
+
+                        window.naver.maps.Event.addListener(marker, 'click', () => {
+                            infoWindow.open(map, marker);
+
+                            // 버튼 클릭 이벤트 추가
+                            const moveButton = document.getElementById(`move-button-${address.id}`);
+                            if (moveButton) {
+                                moveButton.onclick = () => {
+                                    if (address.id) {
+                                        dispatch(saveCurrentRoom(
+                                            rooms.find((room) => room.id === address.roomId) ?? null
+                                        ))
+                                        onCLickToMove(address.id); // address.id가 존재할 때만 호출
+                                    }
+                                };
+                            }
+                        });
+                    }
 
                     markerList.push(marker);
-                    infoWindows.push(infoWindow);
 
                     window.naver.maps.Event.addListener(marker, 'click', () => {
                         infoWindows.forEach((infowindow, idx) => {
@@ -95,7 +133,7 @@ const NaverMap = () => {
         // 네이버 지도 스크립트가 로드된 후 지도 초기화
         if (!window.naver) {
             const script = document.createElement('script');
-            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2zx8z3y9qn&submodules=geocoder`;
+            script.src = process.env.NEXT_PUBLIC_NAVER_MAP as string;
             script.async = true;
             script.onload = initMap;
             document.head.appendChild(script);

@@ -50,7 +50,7 @@ export default function ChatRoomList({ chatRooms, currentChatRoomId }: ChatRoomL
                 className="relative mb-3 me-4 w-full rounded-lg bg-green-700 px-5 py-2.5 text-center text-lg font-bold text-gray-100 hover:bg-green-600"
                 onClick={()=> setIsPopoverVisible((prev) => !prev)}
             >
-                참여중인 대화방 이름 {"^"}
+                디른 대화방 {"^"}
             </button>
             {/* Popover List */}
             <ul

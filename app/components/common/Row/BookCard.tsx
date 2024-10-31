@@ -1,13 +1,11 @@
 "use Client"
 import React from "react";
 import Image from "next/image";
-import { useDispatch } from "react-redux";
 import { saveCurrentBook } from "@/lib/features/group/book.slice";
 import { BookResponseModel } from "@/app/model/group/book.model";
 import { FileModel } from "@/app/model/file/file.model";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/lib/store";
-import { likeBookService } from "@/app/service/group/likeBook.service";
 import { saveCurrentFile } from "@/lib/features/file/file.slice";
 
 interface BookCardProps {
@@ -19,23 +17,8 @@ interface BookCardProps {
 const BookCard = ({ book, active, file }: BookCardProps) => {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const nickname = 'A' // 임의로 넣어둠
 
-    const handleLikeChange = (active: boolean, bookId: number, dispatch: any, nickname: string) => {
-        switch (active) {
-            case true:
-                console.log("좋아요 상태: 활성화");
-                likeBookService.insert({ bookId, nickname }, dispatch);
-                break;
-            case false:
-                console.log("좋아요 상태: 비활성화");
-                likeBookService.drop({ bookId, nickname }, dispatch);
-                break;
-        }
-    };
-
-    const onClickToDetail = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const onClickToDetail = () => {
         dispatch(saveCurrentBook(book));
         dispatch(saveCurrentFile(file));
         router.push(`/books/${book.id}`);
@@ -44,15 +27,15 @@ const BookCard = ({ book, active, file }: BookCardProps) => {
     return (
         <li className="list-none">
             <div
-                className={`max-w-sm rounded-lg border border-gray-200 bg-white shadow ${active ? "ring-2 ring-green-500" : ""}`}>
+                className={`max-w-80 rounded-lg border border-gray-200 bg-white shadow ${active ? 'ring-2 ring-green-500' : ''}`}>
                 <Image
                     width={260}
                     height={210}
-                    className="size-80 cursor-pointer rounded-t-lg object-cover"
-                    src={file.path === process.env.NEXT_PUBLIC_IMAGE_DEFAULT ? process.env.NEXT_PUBLIC_IMAGE_DEFAULT : `http://localhost:8000/api/files?path=${file.path}`}
+                    className="h-40 w-80 cursor-pointer rounded-t-lg object-cover"
+                    src={file.path === process.env.NEXT_PUBLIC_IMAGE_DEFAULT ? process.env.NEXT_PUBLIC_IMAGE_DEFAULT : `https://api.paranmanzang.com/api/files?path=${file.path}`}
                     alt={`cover of ${book.title}`}
                     priority
-               
+
                 />
                 <div className="p-5">
                     <h5 className={`mb-2 text-lg font-medium tracking-tight ${active ? "text-green-600" : "text-gray-900"} cursor-pointer dark:text-white`}>
@@ -65,10 +48,7 @@ const BookCard = ({ book, active, file }: BookCardProps) => {
                         </span>
                     </div>
                     <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onClickToDetail(e);
-                        }}
+                        onClick={onClickToDetail}
                         className="mt-5 inline-flex w-full items-center rounded-lg bg-green-600 p-3 text-sm font-medium text-white hover:bg-green-700"
                     >
                         상세보기

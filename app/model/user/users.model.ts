@@ -2,10 +2,15 @@
 interface UserState {
   users: UserModel[];
   likeRooms: LikeRoomModel[];
-  likePosts: LikePostModel[];
   friends: FriendModel[];
+  alreadyFriends: FriendModel[];
+  requestFriends: FriendModel[];
+  responseFriends: FriendModel[];
+  currentAdminpost: AdminPostModel;
   adminPosts: AdminPostModel[];
   declarationPosts: DeclarationPostModel[];
+  declarationPostsByNickname: DeclarationPostModel[];
+  currentDeclarationPost: DeclarationPostModel | null,
   checkedNames: CheckedNamesModel[];
   isLoading: boolean;
   error: string | null;
@@ -15,10 +20,15 @@ interface UserState {
 export const initialUserState: UserState = {
   users: [],
   likeRooms: [],
-  likePosts: [],
   friends: [],
+  alreadyFriends: [],
+  requestFriends: [],
+  responseFriends: [],
+  currentAdminpost: {} as AdminPostModel,
+  currentDeclarationPost: null,
   adminPosts: [],
   declarationPosts: [],
+  declarationPostsByNickname: [],
   checkedNames: [],
   isLoading: false,
   error: null
@@ -31,7 +41,7 @@ export enum CheckType {
 
 export interface CheckedNamesModel {
   id: number;
-  nickname: string; 
+  nickname: string;
   type: CheckType;
 }
 
@@ -59,20 +69,15 @@ export interface DeclarationPostModel {
   content: string; // 신고 내용 (필수)
   target: string; // 신고 당한 사람 (필수)
   declarer: string; // 신고자 (필수)
+  // createdAt: string;
 }
 
 export interface FriendModel {
   id?: number; // 친구 ID(선택)
   responseUser: string; // 친구 요청 수신자
   requestUser: string; // 친구 요청 발신자
-  requestAt: string; // 요청 보낸 시간
-  responseAt: string; // 요청 수락 시간
-}
-
-export interface LikePostModel {
-  id?: number; //게시물 좋아요 ID(선택)
-  postId: number; //게시물 ID(필수)
-  nickname: string; // 닉네임(필수)
+  requestAt?: string; // 요청 보낸 시간
+  responseAt?: string; // 요청 수락 시간
 }
 
 export interface LikeRoomModel {

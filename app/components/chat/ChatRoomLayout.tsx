@@ -43,16 +43,16 @@ export default function ChatRoomLayout ({
           </button>
         </div>
         <div className="flex h-dvh justify-center rounded-lg bg-gray-100">
-          <section className="relative w-1/5 bg-green-700">
+          <section className="relative w-1/5 bg-green-500">
             {childrenArray[0]} {/* MyChatList */}
             {childrenArray[1]} {/* PeopleList */}
             {childrenArray[2]} {/* MyProfile */}
           </section>
 
-          <article className="flex w-4/5 flex-col bg-blue-200">
-            <aside className="w-full">
+          <article className="flex w-4/5 flex-col">
+            <div className="w-full">
               {childrenArray[3]} {/* ChatPage */}
-            </aside>
+            </div>
           </article>
         </div>
       </div>
